@@ -68,10 +68,12 @@ body {
 
 /* Custom styles for nav-tabs */
 .nav-tabs .nav-link {
-    color: #000000; /* Black */
+    color: #FFCC00; /* Yellow */
+    background-color: #000000; /* Black */
 }
 
 .nav-tabs .nav-link.active {
-    background-color: #000000; /* Black */
-    color: #FFCC00; /* Yellow */
+    background-color: #FFCC00; /* Yellow */
+    color: #000000; /* Black */
+    border-color: #000000 #000000 #FFFFFF; /* Black for top and bottom, white for left and right */
 }
