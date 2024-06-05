@@ -1,28 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Career Advice</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/static/style.css">
+    <title>Career Advice App</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+
+        .tab-content {
+            margin-top: 20px;
+        }
+
+        .nav-tabs .nav-link.active {
+            background-color: #004466;
+            color: white;
+        }
+
+        .nav-tabs .nav-link {
+            color: #004466;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        h1 {
+            color: #004466;
+        }
+
+        a {
+            color: #004466;
+        }
+
+        a:hover {
+            color: #002233;
+        }
+    </style>
 </head>
+
 <body>
     <div class="container">
-        <div class="header">
-            <h1>Career Advice for App State Students</h1>
+        <h1 class="text-center">Career Advice</h1>
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            {% for profession in professions %}
+            <li class="nav-item">
+                <a class="nav-link {% if loop.first %}active{% endif %}" id="{{ profession }}-tab" data-toggle="tab"
+                    href="#{{ profession }}" role="tab" aria-controls="{{ profession }}"
+                    aria-selected="{% if loop.first %}true{% else %}false{% endif %}">{{ profession }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            {% for profession, details in professions.items() %}
+            <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="{{ profession }}" role="tabpanel"
+                aria-labelledby="{{ profession }}-tab">
+                <h3>{{ profession }}</h3>
+                <p>{{ details.description }}</p>
+                <a href="{{ details.link }}" class="btn btn-primary" target="_blank">Learn More</a>
+            </div>
+            {% endfor %}
         </div>
-        <form action="/generate_advice" method="POST">
-            <div class="form-group">
-                <label for="major">Major:</label>
-                <input type="text" class="form-control" id="major" name="major" required>
-            </div>
-            <div class="form-group">
-                <label for="interests">Interests:</label>
-                <input type="text" class="form-control" id="interests" name="interests" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Get Advice</button>
-        </form>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
 </html>
