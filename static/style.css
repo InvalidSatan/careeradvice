@@ -36,8 +36,8 @@ body {
 }
 
 .card-body a {
-    color: #FFCC00; /* Yellow */
-    background-color: #000000; /* Black */
+    color: #000000; /* Black */
+    background-color: #FFCC00; /* Yellow */
     padding: 10px;
     border-radius: 5px;
     text-decoration: none;
@@ -45,8 +45,8 @@ body {
 }
 
 .card-body a:hover {
-    color: #E5AA1C; /* Gold */
-    background-color: #5B5B5B; /* Dark Gray */
+    color: #000000; /* Black */
+    background-color: #E5AA1C; /* Gold */
     text-decoration: none;
 }
 
@@ -76,4 +76,26 @@ body {
     background-color: #FFCC00; /* Yellow */
     color: #000000; /* Black */
     border-color: #000000 #000000 #FFFFFF; /* Black for top and bottom, white for left and right */
+}
+
+/* Centering tab content and adding styling */
+.tab-content {
+    text-align: center;
+    padding-top: 20px;
+}
+
+.tab-pane h3 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: #1d3d90; /* App State Dark Blue */
+}
+
+.tab-pane p {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    color: #5B5B5B; /* Dark Gray */
+}
+
+.tab-pane a {
+    margin: 10px;
 }

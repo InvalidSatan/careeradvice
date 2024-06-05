@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="56f0665a-e9f1-4aac-9caa-f9b2b99e3f62" name="Changes" comment="Updated CSS for accessibility." />
+    <list default="true" id="56f0665a-e9f1-4aac-9caa-f9b2b99e3f62" name="Changes" comment="Updated CSS with better use of App State colors." />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -83,7 +83,7 @@
       <workItem from="1717528185082" duration="169000" />
       <workItem from="1717588884887" duration="11120000" />
       <workItem from="1717601215222" duration="9780000" />
-      <workItem from="1717620701112" duration="1566000" />
+      <workItem from="1717620701112" duration="1875000" />
     </task>
     <task id="LOCAL-00001" summary="Program entry.">
       <option name="closed" value="true" />
@@ -245,7 +245,23 @@
       <option name="project" value="LOCAL" />
       <updated>1717622004677</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="Updated CSS with better use of App State colors.">
+      <option name="closed" value="true" />
+      <created>1717622396119</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1717622396119</updated>
+    </task>
+    <task id="LOCAL-00022" summary="Updated CSS with better use of App State colors.">
+      <option name="closed" value="true" />
+      <created>1717622565932</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1717622565932</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -269,7 +285,8 @@
     <MESSAGE value="Further CSS changes." />
     <MESSAGE value="Adjusted HTML templates to use general CSS styling. Added more scripting." />
     <MESSAGE value="Updated CSS for accessibility." />
-    <option name="LAST_COMMIT_MESSAGE" value="Updated CSS for accessibility." />
+    <MESSAGE value="Updated CSS with better use of App State colors." />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated CSS with better use of App State colors." />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/CareerAdvice_AppState_AI$CareerAdvice.coverage" NAME="CareerAdvice Coverage Results" MODIFIED="1717608747656" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
