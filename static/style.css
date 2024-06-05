@@ -1,0 +1,47 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #ffffff;
+    color: #000000;
+}
+
+header {
+    background-color: #000000;
+    color: #FFCC00;
+    text-align: center;
+    padding: 1em;
+}
+
+.tabs {
+    overflow: hidden;
+    background-color: #000000;
+}
+
+.tablink {
+    background-color: #FFCC00;
+    color: black;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-size: 17px;
+}
+
+.tablink:hover {
+    background-color: #FFD700;
+}
+
+.tablink.active {
+    background-color: #FFD700;
+}
+
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border-top: none;
+}
+
+.tabcontent-container {
+    padding: 10px;
+}

@@ -3,48 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Career Advice</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        body {
-            background-color: #003366; /* App State Dark Blue */
-            color: #FFFFFF; /* App State White */
-            font-family: Arial, sans-serif;
-        }
-        .tab-content {
-            border: 1px solid #CCCCCC;
-            background-color: #FFFFFF;
-            padding: 20px;
-            border-radius: 5px;
-        }
-        .nav-tabs .nav-link {
-            color: #FFFFFF;
-            background-color: #007000; /* App State Green */
-        }
-        .nav-tabs .nav-link.active {
-            color: #007000;
-            background-color: #FFFFFF;
-            border-color: #CCCCCC;
-        }
-    </style>
+    <title>Career Advice App</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-<div class="container mt-5">
-    <h1 class="text-center">Career Advice</h1>
-    <form action="/generate_advice" method="POST" class="mb-4">
-        <div class="form-group">
-            <label for="major">Major</label>
-            <input type="text" id="major" name="major" class="form-control" required>
+    <header>
+        <h1>Career Advice App</h1>
+    </header>
+    <div class="tabs">
+        {% for profession, details in professions.items() %}
+        <button class="tablink" onclick="openProfession(event, '{{ profession }}')">{{ profession }}</button>
+        {% endfor %}
+    </div>
+    <div class="tabcontent-container">
+        {% for profession, details in professions.items() %}
+        <div id="{{ profession }}" class="tabcontent">
+            <h3>{{ profession }}</h3>
+            <p>{{ details.description }}</p>
+            <p><a href="{{ details.google_link }}" target="_blank">More info on Google</a></p>
+            <p><a href="{{ details.app_state_link }}" target="_blank">App State Academic Page</a></p>
         </div>
-        <div class="form-group">
-            <label for="interests">Interests</label>
-            <input type="text" id="interests" name="interests" class="form-control" required>
-        </div>
-        <button type="submit" class="btn btn-primary mt-3">Get Advice</button>
-    </form>
-</div>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        {% endfor %}
+    </div>
+
+    <script>
+        function openProfession(evt, professionName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablink");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(professionName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+    </script>
 </body>
 </html>
