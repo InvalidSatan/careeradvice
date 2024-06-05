@@ -1,1 +1,1 @@
-web: python CareerAdvice.py
+web: gunicorn CareerAdvice:app
