@@ -27,6 +27,7 @@ client = AzureOpenAI(
     api_version=api_version
 )
 
+
 # Fetch the list of programs from the university's academic page
 def fetch_programs():
     try:
@@ -66,9 +67,11 @@ def fetch_programs():
         logging.error(f"Error occurred while fetching programs: {str(e)}")
         return {}
 
+
 programs = fetch_programs()
 program_names = list(programs.keys())
 ai_response_cache = {}
+
 
 def infer_program_url(profession, programs):
     profession_lower = profession.lower()
@@ -108,7 +111,9 @@ def infer_program_url(profession, programs):
     logging.debug("No relevant match found, defaulting to main academics page.")
     return "https://www.appstate.edu/academics/all/"
 
+
 app = Flask(__name__)
+
 
 @app.route('/')
 def home():
@@ -122,12 +127,14 @@ def home():
         </form>
     ''')
 
+
 @app.route('/generate_advice', methods=['POST'])
 def generate_advice():
     major = request.form['major']
     interests = request.form['interests']
     advice = generate_career_advice(major, interests)
     return render_template_string('<h1>Career Advice</h1><pre>{{ advice }}</pre>', advice=advice)
+
 
 def generate_career_advice(major, interests):
     messages = [
@@ -149,6 +156,7 @@ def generate_career_advice(major, interests):
     )
 
     return response.choices[0].message.content.strip()
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
