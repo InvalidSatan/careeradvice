@@ -5,41 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Career Advice</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8f9fa;
-            color: #000000;
-        }
-        .app-state-header {
-            background-color: #1d3d90;
-            color: #ffffff;
-        }
-        .btn-app-state {
-            background-color: #ffcc00;
-            color: #000000;
-        }
-        .btn-app-state:hover {
-            background-color: #e6b800;
-            color: #000000;
-        }
-        .nav-tabs .nav-link {
-            color: #000000;
-        }
-        .nav-tabs .nav-link.active {
-            background-color: #1d3d90;
-            color: #ffffff;
-        }
-        .tab-content {
-            text-align: center;
-        }
-        .tab-pane {
-            padding-top: 20px;
-        }
-    </style>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
     <div class="container">
-        <div class="app-state-header text-center py-3 mb-4">
+        <div class="header text-center py-3 mb-4">
             <h1>Career Advice for {{ major }}</h1>
         </div>
         <div class="card">
@@ -58,8 +28,8 @@
                     <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="content-{{ loop.index }}" role="tabpanel">
                         <h3>{{ profession.name }}</h3>
                         <p>{{ profession.description }}</p>
-                        <p><a href="{{ profession.more_info }}" target="_blank" class="btn btn-app-state">More Info</a></p>
-                        <p><a href="{{ profession.program_url }}" target="_blank" class="btn btn-app-state">Related Program at App State</a></p>
+                        <p><a href="{{ profession.more_info }}" target="_blank" class="btn btn-primary">More Info</a></p>
+                        <p><a href="{{ profession.program_url }}" target="_blank" class="btn btn-primary">Related Program at App State</a></p>
                     </div>
                     {% endfor %}
                 </div>

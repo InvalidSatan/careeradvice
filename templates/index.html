@@ -5,35 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Career Advice</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8f9fa;
-            color: #000000;
-        }
-        .app-state-header {
-            background-color: #1d3d90;
-            color: #ffffff;
-        }
-        .btn-app-state {
-            background-color: #ffcc00;
-            color: #000000;
-        }
-        .btn-app-state:hover {
-            background-color: #e6b800;
-            color: #000000;
-        }
-        .nav-tabs .nav-link {
-            color: #000000;
-        }
-        .nav-tabs .nav-link.active {
-            background-color: #1d3d90;
-            color: #ffffff;
-        }
-    </style>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
     <div class="container">
-        <div class="app-state-header text-center py-3 mb-4">
+        <div class="header text-center py-3 mb-4">
             <h1>App State Career Advice</h1>
         </div>
         <div class="card">
@@ -47,7 +23,7 @@
                         <label for="interests">Interests</label>
                         <input type="text" class="form-control" id="interests" name="interests" required>
                     </div>
-                    <button type="submit" class="btn btn-app-state">Get Career Advice</button>
+                    <button type="submit" class="btn btn-primary">Get Career Advice</button>
                     <button type="reset" class="btn btn-secondary ml-2">Reset</button>
                 </form>
             </div>
