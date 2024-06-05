@@ -1,43 +1,43 @@
 /* Base Styles */
 body {
-    background-color: #F8F9FA;
+    background-color: #FFFFFF; /* White */
     font-family: 'Helvetica', 'Arial', sans-serif;
-    color: #000000;
+    color: #000000; /* Black */
 }
 
 .header {
-    background-color: #1d3d90;
-    color: #FFFFFF;
+    background-color: #000000; /* Black */
+    color: #FFCC00; /* Yellow */
     padding: 20px;
     text-align: center;
     margin-bottom: 20px;
 }
 
 .btn-primary {
-    background-color: #FFCC00;
-    border-color: #FFCC00;
-    color: #000000;
+    background-color: #FFCC00; /* Yellow */
+    border-color: #FFCC00; /* Yellow */
+    color: #000000; /* Black */
 }
 
 .btn-primary:hover {
-    background-color: #e6b800;
-    border-color: #e6b800;
-    color: #000000;
+    background-color: #E5AA1C; /* Gold */
+    border-color: #E5AA1C; /* Gold */
+    color: #000000; /* Black */
 }
 
 .card-header {
-    background-color: #1d3d90;
-    color: #FFFFFF;
+    background-color: #000000; /* Black */
+    color: #FFCC00; /* Yellow */
 }
 
 .card-body {
-    background-color: #FFFFFF;
-    color: #000000;
+    background-color: #FFFFFF; /* White */
+    color: #000000; /* Black */
 }
 
 .card-body a {
-    color: #FFCC00;
-    background-color: #1d3d90; /* Ensuring contrast */
+    color: #FFCC00; /* Yellow */
+    background-color: #000000; /* Black */
     padding: 10px;
     border-radius: 5px;
     text-decoration: none;
@@ -45,8 +45,8 @@ body {
 }
 
 .card-body a:hover {
-    color: #e6b800;
-    background-color: #143269; /* Darker shade for hover */
+    color: #E5AA1C; /* Gold */
+    background-color: #5B5B5B; /* Dark Gray */
     text-decoration: none;
 }
 
@@ -68,10 +68,10 @@ body {
 
 /* Custom styles for nav-tabs */
 .nav-tabs .nav-link {
-    color: #000000;
+    color: #000000; /* Black */
 }
 
 .nav-tabs .nav-link.active {
-    background-color: #1d3d90;
-    color: #ffffff;
+    background-color: #000000; /* Black */
+    color: #FFCC00; /* Yellow */
 }
