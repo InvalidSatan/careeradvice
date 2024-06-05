@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect, url_for
+from flask import Flask, request, render_template
 import requests
 from bs4 import BeautifulSoup
 from fuzzywuzzy import process, fuzz
@@ -26,7 +26,6 @@ client = AzureOpenAI(
     api_key=api_key,
     api_version=api_version
 )
-
 
 # Fetch the list of programs from the university's academic page
 def fetch_programs():
@@ -67,11 +66,9 @@ def fetch_programs():
         logging.error(f"Error occurred while fetching programs: {str(e)}")
         return {}
 
-
 programs = fetch_programs()
 program_names = list(programs.keys())
 ai_response_cache = {}
-
 
 def infer_program_url(profession, programs):
     profession_lower = profession.lower()
@@ -108,33 +105,26 @@ def infer_program_url(profession, programs):
     logging.debug("No relevant match found, defaulting to main academics page.")
     return "https://www.appstate.edu/academics/all/"
 
-
 app = Flask(__name__)
-
 
 @app.route('/')
 def home():
     return render_template('index.html')
-
 
 @app.route('/generate_advice', methods=['POST'])
 def generate_advice():
     major = request.form['major']
     interests = request.form['interests']
     advice = generate_career_advice(major, interests)
-    return render_template('advice.html', advice=advice)
-
+    professions = extract_professions(advice)
+    return render_template('advice.html', professions=professions)
 
 def generate_career_advice(major, interests):
     messages = [
         {"role": "system",
-         "content": "You are an expert in giving career advice and work within the Appalachian State University "
-                    "Career Development Center."},
+         "content": "You are an expert in giving career advice and work within the Appalachian State University Career Development Center."},
         {"role": "user",
-         "content": f"I am a student majoring in {major} with interests in {interests}. What career paths would you "
-                    f"recommend for me and why? Please provide a brief description for each career path, and start "
-                    f"each career path with a number followed by a period and the profession name, like this: '1. "
-                    f"Profession Name: Description'."}
+         "content": f"I am a student majoring in {major} with interests in {interests}. What career paths would you recommend for me and why? Please provide a brief description for each career path, and start each career path with a number followed by a period and the profession name, like this: '1. Profession Name: Description'."}
     ]
 
     response = client.chat.completions.create(
@@ -146,6 +136,23 @@ def generate_career_advice(major, interests):
 
     return response.choices[0].message.content.strip()
 
+def extract_professions(advice):
+    professions = []
+    current_profession = None
+    for line in advice.split("\n"):
+        if line.startswith(tuple(str(i) + "." for i in range(1, 10))):
+            profession_name = line.split(":")[0].split(".", 1)[1].strip()
+            current_profession = {
+                'name': profession_name,
+                'description': line.split(":", 1)[1].strip(),
+                'more_info': f"https://www.google.com/search?q=What+does+a+{profession_name.replace(' ', '+')}+do?",
+                'program_url': infer_program_url(profession_name, programs)
+            }
+            professions.append(current_profession)
+        elif current_profession:
+            current_profession['description'] += " " + line.strip()
+
+    return professions
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))

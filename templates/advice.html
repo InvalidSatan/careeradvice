@@ -13,17 +13,35 @@
         .container {
             max-width: 700px;
         }
-        pre {
-            white-space: pre-wrap;
-            word-wrap: break-word;
+        .nav-tabs .nav-link.active {
+            background-color: #007bff;
+            color: white;
+        }
+        .tab-pane {
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
 <div class="container">
     <h1 class="text-center">Career Advice</h1>
-    <pre>{{ advice }}</pre>
-    <a href="/" class="btn btn-secondary w-100">Back</a>
+    <ul class="nav nav-tabs" id="professionTabs" role="tablist">
+        {% for profession in professions %}
+            <li class="nav-item" role="presentation">
+                <button class="nav-link {% if loop.first %}active{% endif %}" id="tab-{{ loop.index }}" data-bs-toggle="tab" data-bs-target="#content-{{ loop.index }}" type="button" role="tab" aria-controls="content-{{ loop.index }}" aria-selected="true">{{ profession.name }}</button>
+            </li>
+        {% endfor %}
+    </ul>
+    <div class="tab-content" id="professionTabContent">
+        {% for profession in professions %}
+            <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="content-{{ loop.index }}" role="tabpanel" aria-labelledby="tab-{{ loop.index }}">
+                <p>{{ profession.description }}</p>
+                <a href="{{ profession.more_info }}" class="btn btn-info" target="_blank">More Info</a>
+                <a href="{{ profession.program_url }}" class="btn btn-secondary" target="_blank">Relevant Program</a>
+            </div>
+        {% endfor %}
+    </div>
+    <a href="/" class="btn btn-secondary w-100 mt-4">Back</a>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
