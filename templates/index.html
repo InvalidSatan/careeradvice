@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Career Advice Generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 40px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 700px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 class="text-center">Career Advice Generator</h1>
+    <form action="/generate_advice" method="post">
+        <div class="mb-3">
+            <label for="major" class="form-label">Major:</label>
+            <input type="text" class="form-control" id="major" name="major" required>
+        </div>
+        <div class="mb-3">
+            <label for="interests" class="form-label">Interests:</label>
+            <input type="text" class="form-control" id="interests" name="interests" required>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Generate Advice</button>
+    </form>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

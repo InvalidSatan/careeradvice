@@ -1,11 +1,11 @@
-from flask import Flask, request, render_template, redirect, url_for
+from openai import AzureOpenAI
 import requests
 from bs4 import BeautifulSoup
 from fuzzywuzzy import process, fuzz
 import logging
 import json
+from flask import Flask, request, render_template_string
 import os
-from openai import AzureOpenAI
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -83,7 +83,10 @@ def infer_program_url(profession, programs):
         messages = [
             {"role": "system", "content": "You are an expert in matching professions to academic programs."},
             {"role": "user",
-             "content": f"Given the profession '{profession}', which of the following academic programs would be most relevant based on the name and description?\n\n{chr(10).join(program_names)}\n\nPlease provide only the exact name of the most relevant program, without any additional explanation."}
+             "content": f"Given the profession '{profession}', which of the following academic programs would be most "
+                        f"relevant based on the name and description?\n\n{chr(10).join(program_names)}\n\nPlease "
+                        f"provide only the exact name of the most relevant program, without any additional "
+                        f"explanation."}
         ]
 
         response = client.chat.completions.create(
@@ -114,7 +117,15 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return render_template_string('''
+        <form action="/generate_advice" method="post">
+            <label for="major">Major:</label>
+            <input type="text" id="major" name="major"><br><br>
+            <label for="interests">Interests:</label>
+            <input type="text" id="interests" name="interests"><br><br>
+            <input type="submit" value="Generate Advice">
+        </form>
+    ''')
 
 
 @app.route('/generate_advice', methods=['POST'])
@@ -122,7 +133,7 @@ def generate_advice():
     major = request.form['major']
     interests = request.form['interests']
     advice = generate_career_advice(major, interests)
-    return render_template('advice.html', advice=advice)
+    return render_template_string('<h1>Career Advice</h1><pre>{{ advice }}</pre>', advice=advice)
 
 
 def generate_career_advice(major, interests):
