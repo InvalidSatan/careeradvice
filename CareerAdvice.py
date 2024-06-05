@@ -123,7 +123,7 @@ def generate_advice():
     interests = request.form['interests']
     advice = generate_career_advice(major, interests)
     professions = extract_professions(advice)
-    return render_template('advice.html', professions=professions)
+    return render_template('advice.html', professions=professions, major=major)
 
 
 def generate_career_advice(major, interests):
