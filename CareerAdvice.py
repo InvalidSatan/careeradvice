@@ -27,6 +27,7 @@ client = AzureOpenAI(
     api_version=api_version
 )
 
+
 # Fetch the list of programs from the university's academic page
 def fetch_programs():
     try:
@@ -66,9 +67,11 @@ def fetch_programs():
         logging.error(f"Error occurred while fetching programs: {str(e)}")
         return {}
 
+
 programs = fetch_programs()
 program_names = list(programs.keys())
 ai_response_cache = {}
+
 
 def infer_program_url(profession, programs):
     profession_lower = profession.lower()
@@ -105,11 +108,14 @@ def infer_program_url(profession, programs):
     logging.debug("No relevant match found, defaulting to main academics page.")
     return "https://www.appstate.edu/academics/all/"
 
+
 app = Flask(__name__)
+
 
 @app.route('/')
 def home():
     return render_template('index.html')
+
 
 @app.route('/generate_advice', methods=['POST'])
 def generate_advice():
@@ -119,12 +125,17 @@ def generate_advice():
     professions = extract_professions(advice)
     return render_template('advice.html', professions=professions)
 
+
 def generate_career_advice(major, interests):
     messages = [
         {"role": "system",
-         "content": "You are an expert in giving career advice and work within the Appalachian State University Career Development Center."},
+         "content": "You are an expert in giving career advice and work within the Appalachian State University "
+                    "Career Development Center."},
         {"role": "user",
-         "content": f"I am a student majoring in {major} with interests in {interests}. What career paths would you recommend for me and why? Please provide a brief description for each career path, and start each career path with a number followed by a period and the profession name, like this: '1. Profession Name: Description'."}
+         "content": f"I am a student majoring in {major} with interests in {interests}. What career paths would you "
+                    f"recommend for me and why? Please provide a brief description for each career path, "
+                    f"and start each career path with a number followed by a period and the profession name, "
+                    f"like this: '1. Profession Name: Description'."}
     ]
 
     response = client.chat.completions.create(
@@ -135,6 +146,7 @@ def generate_career_advice(major, interests):
     )
 
     return response.choices[0].message.content.strip()
+
 
 def extract_professions(advice):
     professions = []
@@ -153,6 +165,7 @@ def extract_professions(advice):
             current_profession['description'] += " " + line.strip()
 
     return professions
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))

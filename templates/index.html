@@ -31,25 +31,17 @@
 <body>
 <div class="container mt-5">
     <h1 class="text-center">Career Advice</h1>
-    <ul class="nav nav-tabs" id="professionTabs" role="tablist">
-        {% for profession, details in professions.items() %}
-        <li class="nav-item">
-            <a class="nav-link {% if loop.first %}active{% endif %}" id="{{ profession }}-tab" data-toggle="tab" href="#{{ profession }}" role="tab" aria-controls="{{ profession }}" aria-selected="{% if loop.first %}true{% else %}false{% endif %}">{{ profession }}</a>
-        </li>
-        {% endfor %}
-    </ul>
-    <div class="tab-content mt-3">
-        {% for profession, details in professions.items() %}
-        <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="{{ profession }}" role="tabpanel" aria-labelledby="{{ profession }}-tab">
-            <h3>{{ profession }}</h3>
-            <p>{{ details.description }}</p>
-            <p>
-                <a href="{{ details.google_link }}" target="_blank" class="btn btn-primary">More Information on Google</a>
-                <a href="{{ details.app_state_link }}" target="_blank" class="btn btn-success">App State Academic Page</a>
-            </p>
+    <form action="/generate_advice" method="POST" class="mb-4">
+        <div class="form-group">
+            <label for="major">Major</label>
+            <input type="text" id="major" name="major" class="form-control" required>
         </div>
-        {% endfor %}
-    </div>
+        <div class="form-group">
+            <label for="interests">Interests</label>
+            <input type="text" id="interests" name="interests" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Get Advice</button>
+    </form>
 </div>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
