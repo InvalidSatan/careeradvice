@@ -4,8 +4,8 @@ from bs4 import BeautifulSoup
 from fuzzywuzzy import process, fuzz
 import logging
 import json
-import os
 from openai import AzureOpenAI
+
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -113,7 +113,7 @@ app = Flask(__name__)
 
 
 @app.route('/')
-def home():
+def index():
     return render_template('index.html')
 
 
@@ -167,6 +167,5 @@ def extract_professions(advice):
     return professions
 
 
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8000))
-    app.run(host='0.0.0.0', port=port)
+if __name__ == '__main__':
+    app.run(debug=True)

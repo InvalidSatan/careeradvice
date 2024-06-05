@@ -22,9 +22,18 @@
             background-color: #e6b800;
             color: #000000;
         }
+        .nav-tabs .nav-link {
+            color: #000000;
+        }
         .nav-tabs .nav-link.active {
             background-color: #1d3d90;
             color: #ffffff;
+        }
+        .tab-content {
+            text-align: center;
+        }
+        .tab-pane {
+            padding-top: 20px;
         }
     </style>
 </head>
@@ -35,7 +44,7 @@
         </div>
         <div class="card">
             <div class="card-body">
-                <ul class="nav nav-tabs" id="professionTabs" role="tablist">
+                <ul class="nav nav-tabs justify-content-center" id="professionTabs" role="tablist">
                     {% for profession in professions %}
                     <li class="nav-item">
                         <a class="nav-link {% if loop.first %}active{% endif %}" id="tab-{{ loop.index }}" data-toggle="tab" href="#content-{{ loop.index }}" role="tab">
@@ -53,6 +62,9 @@
                         <p><a href="{{ profession.program_url }}" target="_blank" class="btn btn-app-state">Related Program at App State</a></p>
                     </div>
                     {% endfor %}
+                </div>
+                <div class="text-center mt-4">
+                    <a href="/" class="btn btn-secondary">Start Over</a>
                 </div>
             </div>
         </div>
