@@ -37,10 +37,17 @@ body {
 
 .card-body a {
     color: #FFCC00;
+    background-color: #1d3d90; /* Ensuring contrast */
+    padding: 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    display: inline-block;
 }
 
 .card-body a:hover {
     color: #e6b800;
+    background-color: #143269; /* Darker shade for hover */
+    text-decoration: none;
 }
 
 .card {
@@ -57,4 +64,14 @@ body {
     .header, .footer {
         text-align: center;
     }
+}
+
+/* Custom styles for nav-tabs */
+.nav-tabs .nav-link {
+    color: #000000;
+}
+
+.nav-tabs .nav-link.active {
+    background-color: #1d3d90;
+    color: #ffffff;
 }
