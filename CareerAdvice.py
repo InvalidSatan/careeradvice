@@ -6,6 +6,8 @@ from bs4 import BeautifulSoup
 from fuzzywuzzy import process, fuzz
 import logging
 import json
+from flask import Flask
+import os
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -306,3 +308,15 @@ notebook.pack(pady=10, fill="both", expand=True)
 
 # Start the main event loop
 window.mainloop()
+
+app = Flask(__name__)
+
+
+@app.route('/')
+def home():
+    return "Hello, Heroku!"
+
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8000))
+    app.run(host='0.0.0.0', port=port)
