@@ -1,4 +1,7 @@
-/* ... (keep all previous CSS) ... */
+body {
+    background-color: #F8F9FA;
+    font-family: 'Roboto', Arial, sans-serif;
+}
 
 .app-state-header {
     background-color: #000000; /* App State Black */
@@ -9,39 +12,106 @@
 
 .app-state-header h1 {
     color: #FFC520; /* App State Gold */
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.5); /* Add shadow for better readability */
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
 }
 
-/* Center the tabs */
+.btn-app-state {
+    background-color: #FFC520; /* App State Gold */
+    color: #000000; /* App State Black */
+    border: none;
+    padding: 10px 20px;
+    transition: background-color 0.3s ease;
+    display: inline-block;
+    text-align: center;
+    text-decoration: none;
+    margin: 5px;
+    border-radius: 5px;
+}
+
+.btn-app-state:hover {
+    background-color: #e6b100; /* Darker shade of App State Gold */
+    color: #000000; /* App State Black */
+    text-decoration: none;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.card-body {
+    padding: 30px;
+}
+
+.form-control {
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+}
+
+.form-control:focus {
+    box-shadow: 0 0 0 0.2rem rgba(255,197,32,0.25); /* App State Gold with opacity */
+    border-color: #FFC520; /* App State Gold */
+}
+
 .nav-tabs {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    border-bottom: none;
+    border-bottom: 1px solid #dee2e6;
+    margin-bottom: 20px;
 }
 
 .nav-tabs .nav-item {
-    margin-bottom: 10px;
+    margin-bottom: -1px;
 }
 
 .nav-tabs .nav-link {
     color: #000000; /* App State Black */
-    border: none;
-    border-bottom: 2px solid transparent;
-    transition: border-color 0.3s ease, color 0.3s ease;
-    margin: 0 10px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-bottom-color: transparent;
+    border-radius: 5px 5px 0 0;
+    padding: 10px 15px;
+    margin-right: 5px;
+    transition: all 0.3s ease;
 }
 
-.nav-tabs .nav-link.active,
 .nav-tabs .nav-link:hover {
-    background-color: transparent;
-    border-bottom: 2px solid #003366; /* App State Dark Blue */
-    color: #003366; /* App State Dark Blue */
+    border-color: #e9ecef #e9ecef #dee2e6;
 }
 
-/* Ensure consistent button styling */
-.btn-app-state, .btn-secondary {
-    margin: 5px;
+.nav-tabs .nav-link.active {
+    color: #FFC520; /* App State Gold */
+    background-color: #000000; /* App State Black */
+    border-color: #dee2e6 #dee2e6 #fff;
 }
 
-/* ... (keep all remaining CSS) ... */
+.tab-content {
+    padding-top: 20px;
+}
+
+.tab-pane {
+    text-align: center;
+}
+
+.btn-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-secondary {
+    background-color: #003366; /* App State Dark Blue */
+    border-color: #003366; /* App State Dark Blue */
+    color: #FFFFFF;
+    border-radius: 5px;
+    padding: 10px 20px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background-color: #002144; /* Darker shade of App State Dark Blue */
+    border-color: #002144;
+    color: #FFFFFF;
+}

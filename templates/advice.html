@@ -33,7 +33,7 @@
                             <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="content-{{ loop.index }}" role="tabpanel">
                                 <h3 class="mt-4">{{ profession.name }}</h3>
                                 <p>{{ profession.description }}</p>
-                                <div class="mt-4">
+                                <div class="btn-container mt-4">
                                     <a href="{{ profession.more_info }}" target="_blank" class="btn btn-app-state">Learn More</a>
                                     <a href="{{ profession.program_url }}" target="_blank" class="btn btn-app-state">Related Program at App State</a>
                                 </div>
