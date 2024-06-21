@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Mountain Race with Improved Obstacles</title>
+    <title>AI Mountain Race with Advanced AI</title>
     <script src="https://cdn.jsdelivr.net/npm/pixi.js@7.x/dist/pixi.min.js"></script>
     <style>
         body { margin: 0; padding: 0; overflow: hidden; }
@@ -25,7 +25,7 @@
         const GRAVITY = 0.5;
         const JUMP_FORCE = -12;
         const MOVE_SPEED = 3;
-        const AI_DECISION_RATE = 10; // Make decisions more frequently
+        const AI_UPDATE_RATE = 5; // Update AI every 5 frames
 
         // Create game containers
         const worldContainer = new PIXI.Container();
@@ -36,8 +36,77 @@
         worldContainer.addChild(backgroundContainer, terrainContainer, obstacleContainer, playerContainer);
         app.stage.addChild(worldContainer);
 
+        // Advanced AI class
+        class AdvancedAI {
+            constructor(player, otherPlayer) {
+                this.player = player;
+                this.otherPlayer = otherPlayer;
+                this.jumpCooldown = 0;
+            }
+
+            makeDecision() {
+                const terrainAhead = this.analyzeTerrainAhead();
+                const nearestObstacle = this.findNearestObstacle();
+                const competitorPosition = this.analyzeCompetitorPosition();
+
+                let jumpProbability = 0;
+
+                // Terrain-based decision
+                if (terrainAhead < -20) jumpProbability += 0.4; // Approaching a cliff
+                else if (terrainAhead > 20) jumpProbability += 0.3; // Approaching an uphill
+
+                // Obstacle-based decision
+                if (nearestObstacle && nearestObstacle.distance < 100) {
+                    jumpProbability += 0.6;
+                }
+
+                // Competitor-based decision
+                if (competitorPosition > 50) jumpProbability += 0.2; // Try to catch up
+
+                // Random factor for unpredictability
+                jumpProbability += Math.random() * 0.1;
+
+                // Perform jump if probability is high enough and not on cooldown
+                if (jumpProbability > 0.7 && this.jumpCooldown <= 0 && !this.player.jumping) {
+                    this.player.vy = JUMP_FORCE;
+                    this.player.jumping = true;
+                    this.jumpCooldown = 30; // Set a cooldown to prevent continuous jumping
+                }
+
+                // Decrease jump cooldown
+                if (this.jumpCooldown > 0) this.jumpCooldown--;
+            }
+
+            analyzeTerrainAhead() {
+                const currentIndex = Math.floor(this.player.x / terrainResolution);
+                const aheadIndex = Math.floor((this.player.x + 100) / terrainResolution);
+                if (currentIndex >= 0 && currentIndex < terrainPoints.length &&
+                    aheadIndex >= 0 && aheadIndex < terrainPoints.length) {
+                    return terrainPoints[currentIndex].y - terrainPoints[aheadIndex].y;
+                }
+                return 0;
+            }
+
+            findNearestObstacle() {
+                const nearObstacles = obstacles.filter(obs =>
+                    obs.x > this.player.x && obs.x < this.player.x + 300
+                );
+                if (nearObstacles.length > 0) {
+                    const nearest = nearObstacles.reduce((prev, current) =>
+                        (current.x - this.player.x < prev.x - this.player.x) ? current : prev
+                    );
+                    return { obstacle: nearest, distance: nearest.x - this.player.x };
+                }
+                return null;
+            }
+
+            analyzeCompetitorPosition() {
+                return this.otherPlayer.x - this.player.x;
+            }
+        }
+
         // AI Players
-        function createPlayer(color, x) {
+        function createPlayer(color, x, name) {
             const player = new PIXI.Graphics();
             player.beginFill(color);
             player.drawRect(-15, -25, 30, 50);
@@ -47,12 +116,15 @@
             player.vy = 0;
             player.jumping = false;
             player.score = 0;
+            player.name = name;
             playerContainer.addChild(player);
             return player;
         }
 
-        const player1 = createPlayer(0xFF0000, 100); // Red player
-        const player2 = createPlayer(0x0000FF, 50);  // Blue player
+        const player1 = createPlayer(0xFF0000, 100, "Red");
+        const player2 = createPlayer(0x0000FF, 50, "Blue");
+        const ai1 = new AdvancedAI(player1, player2);
+        const ai2 = new AdvancedAI(player2, player1);
 
         // Terrain and Obstacles
         const terrainWidth = 50000;
@@ -77,10 +149,10 @@
                 terrainPoints.push(new PIXI.Point(x, y));
 
                 // Add obstacles randomly
-                if (Math.random() < 0.1 && x > 1000) { // Start adding obstacles after 1000px
+                if (Math.random() < 0.1 && x > 1000) {
                     obstacles.push({
                         x: x,
-                        y: y - 40, // Place obstacle slightly higher above the ground
+                        y: y - 40,
                         width: 30,
                         height: 40
                     });
@@ -130,7 +202,7 @@
             // Draw obstacles
             obstacles.forEach(obstacle => {
                 const obstacleGraphics = new PIXI.Graphics();
-                obstacleGraphics.beginFill(0xFF0000); // Changed to red for better visibility
+                obstacleGraphics.beginFill(0xFF0000);
                 obstacleGraphics.drawRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
                 obstacleGraphics.endFill();
                 obstacleContainer.addChild(obstacleGraphics);
@@ -156,7 +228,7 @@
                 mountain.lineTo(600, app.screen.height);
                 mountain.endFill();
                 mountain.x = i * 500;
-                mountain.tint = 0x6a8ea6 - (i % 3) * 0x111111; // Vary mountain colors slightly
+                mountain.tint = 0x6a8ea6 - (i % 3) * 0x111111;
                 backgroundContainer.addChild(mountain);
             }
         }
@@ -169,29 +241,6 @@
                 player.y > obstacle.y &&
                 player.y - 50 < obstacle.y + obstacle.height
             );
-        }
-
-        // AI decision making
-        function makeAIDecision(player, otherPlayer) {
-            const terrainIndex = Math.floor(player.x / terrainResolution);
-            const nextTerrainIndex = Math.floor((player.x + 100) / terrainResolution);
-
-            if (terrainIndex >= 0 && terrainIndex < terrainPoints.length &&
-                nextTerrainIndex >= 0 && nextTerrainIndex < terrainPoints.length) {
-                const currentHeight = terrainPoints[terrainIndex].y;
-                const nextHeight = terrainPoints[nextTerrainIndex].y;
-
-                // Check for nearby obstacles
-                const nearbyObstacle = obstacles.find(obstacle =>
-                    obstacle.x > player.x && obstacle.x < player.x + 200
-                );
-
-                // Jump if approaching a higher terrain, to catch up with the other player, or to avoid an obstacle
-                if ((nextHeight < currentHeight - 10 || otherPlayer.x > player.x + 50 || nearbyObstacle) && !player.jumping) {
-                    player.vy = JUMP_FORCE;
-                    player.jumping = true;
-                }
-            }
         }
 
         // Update game state
@@ -218,13 +267,14 @@
 
                     // Check obstacle collision
                     if (checkObstacleCollision(player)) {
-                        player.x -= MOVE_SPEED * 5; // Push player back more
-                        player.score = Math.max(0, player.score - 10); // Bigger penalty for hitting an obstacle
+                        player.x -= MOVE_SPEED * 5;
+                        player.score = Math.max(0, player.score - 10);
                     }
 
                     // AI decision making
-                    if (app.ticker.lastTime % AI_DECISION_RATE === 0) {
-                        makeAIDecision(player, index === 0 ? player2 : player1);
+                    if (app.ticker.lastTime % AI_UPDATE_RATE === 0) {
+                        if (index === 0) ai1.makeDecision();
+                        else ai2.makeDecision();
                     }
 
                     // Update score
@@ -235,11 +285,13 @@
                 const leadingPlayer = player1.x > player2.x ? player1 : player2;
                 cameraX = leadingPlayer.x - app.screen.width / 3;
                 worldContainer.x = -cameraX;
-                backgroundContainer.x = -cameraX * 0.5; // Parallax effect
+                backgroundContainer.x = -cameraX * 0.5;
 
                 // Check for game over condition
                 if (Math.max(player1.x, player2.x) >= terrainWidth - 100) {
                     gameState = 'gameOver';
+                    const winner = player1.x > player2.x ? player1 : player2;
+                    console.log(`Game Over! ${winner.name} wins with a score of ${winner.score}!`);
                 }
             }
         }
