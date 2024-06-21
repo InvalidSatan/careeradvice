@@ -5,7 +5,7 @@ canvas.width = 800;
 canvas.height = 600;
 
 const GRAVITY = 0.5;
-const JUMP_FORCE = -10;
+const JUMP_FORCE = -12;
 const MOVE_SPEED = 3;
 const CLIMB_SPEED = 2;
 
@@ -17,6 +17,7 @@ const player = {
     vx: 0,
     vy: 0,
     climbing: false,
+    jumping: false,
     color: '#FFC520',
     powerUp: null
 };
@@ -63,7 +64,7 @@ function generateTerrain() {
 
     // Randomly add pitfalls
     if (Math.random() < 0.2) {
-        const pitfallWidth = Math.random() * 50 + 30;
+        const pitfallWidth = Math.random() * 80 + 40;
         terrain.push({
             x: newSegment.x + newSegment.width,
             y: canvas.height + 50,  // Below the canvas
@@ -235,10 +236,8 @@ function update() {
     drawPowerUps();
     drawPlayer();
 
-    // Apply gravity if not climbing
-    if (!player.climbing) {
-        player.vy += GRAVITY;
-    }
+    // Apply gravity
+    player.vy += GRAVITY;
 
     // Move player
     player.x += player.vx;
@@ -246,15 +245,22 @@ function update() {
 
     // Check for terrain collision and climbing
     player.climbing = false;
+    let onGround = false;
     for (let segment of terrain) {
         if (player.x + player.width > segment.x && player.x < segment.x + segment.width) {
             if (player.y + player.height > segment.y - 5 && player.y + player.height < segment.y + 10) {
                 player.y = segment.y - player.height;
                 player.vy = 0;
                 player.climbing = true;
+                onGround = true;
                 break;
             }
         }
+    }
+
+    // Reset jumping state if on ground
+    if (onGround) {
+        player.jumping = false;
     }
 
     // Climbing mechanics
@@ -325,6 +331,7 @@ function startGame() {
     player.vx = MOVE_SPEED;
     player.vy = 0;
     player.climbing = false;
+    player.jumping = false;
     player.powerUp = null;
     gameActive = true;
     document.getElementById('scoreDisplay').innerText = 'Score: 0';
@@ -335,6 +342,15 @@ function startGame() {
     }
 
     requestAnimationFrame(update);
+}
+
+
+function jump() {
+    if (!player.jumping && !player.powerUp) {
+        player.vy = JUMP_FORCE;
+        player.jumping = true;
+        player.climbing = false;
+    }
 }
 
 function drawStartScreen() {
@@ -350,8 +366,8 @@ function drawStartScreen() {
 canvas.addEventListener('click', () => {
     if (!gameActive) {
         startGame();
-    } else if (!player.climbing && player.powerUp !== 'jetpack') {
-        player.vy = JUMP_FORCE;
+    } else {
+        jump();
     }
 });
 
@@ -359,8 +375,8 @@ window.addEventListener('keydown', (e) => {
     if (e.code === 'Space') {
         if (!gameActive) {
             startGame();
-        } else if (!player.climbing && player.powerUp !== 'jetpack') {
-            player.vy = JUMP_FORCE;
+        } else {
+            jump();
         }
     }
 });
