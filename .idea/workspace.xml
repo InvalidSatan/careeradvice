@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="56f0665a-e9f1-4aac-9caa-f9b2b99e3f62" name="Changes" comment="Bug fixing -&#10;&#10;Game would not start on click or spacebar.">
+    <list default="true" id="56f0665a-e9f1-4aac-9caa-f9b2b99e3f62" name="Changes" comment="Re-imagined game as side-scroller.">
       <change beforePath="$PROJECT_DIR$/static/game.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/game.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -329,7 +329,15 @@
       <option name="project" value="LOCAL" />
       <updated>1718994087195</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="Re-imagined game as side-scroller.">
+      <option name="closed" value="true" />
+      <created>1718994604357</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1718994604357</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -337,7 +345,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Added Procfile and updated program to include Flask." />
     <MESSAGE value="Adjusted requirements." />
     <MESSAGE value="Changed to no longer include GUI." />
     <MESSAGE value="Removed text version of Procfile." />
@@ -362,7 +369,8 @@
     <MESSAGE value="Updated game to add theme and further improve pathing and difficulty scaling." />
     <MESSAGE value="Updated game with improved graphics and added jump functionality." />
     <MESSAGE value="Bug fixing -&#10;&#10;Game would not start on click or spacebar." />
-    <option name="LAST_COMMIT_MESSAGE" value="Bug fixing -&#10;&#10;Game would not start on click or spacebar." />
+    <MESSAGE value="Re-imagined game as side-scroller." />
+    <option name="LAST_COMMIT_MESSAGE" value="Re-imagined game as side-scroller." />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/CareerAdvice_AppState_AI$CareerAdvice.coverage" NAME="CareerAdvice Coverage Results" MODIFIED="1717608747656" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

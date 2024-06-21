@@ -6,8 +6,8 @@ canvas.height = 600;
 
 const GRAVITY = 0.5;
 const JUMP_FORCE = -10;
-const CLIMB_SPEED = 2;
-const GAME_SPEED_INCREMENT = 0.0001;
+const MOVE_SPEED = 5;
+const CLIMB_SPEED = 3;
 
 const player = {
     x: 100,
@@ -25,7 +25,6 @@ let obstacles = [];
 let powerUps = [];
 let score = 0;
 let highScore = localStorage.getItem('highScore') || 0;
-let gameSpeed = 2;
 let gameLoop;
 let gameActive = false;
 
@@ -93,9 +92,9 @@ function drawTerrain() {
     ctx.beginPath();
     terrain.forEach((segment, index) => {
         if (index === 0) {
-            ctx.moveTo(segment.x, segment.y);
+            ctx.moveTo(segment.x - player.x + 100, segment.y);
         } else {
-            ctx.lineTo(segment.x, segment.y);
+            ctx.lineTo(segment.x - player.x + 100, segment.y);
         }
     });
     ctx.stroke();
@@ -192,12 +191,11 @@ function update() {
     drawPlayer();
 
     // Move player
+    player.x += MOVE_SPEED;
     if (player.climbing) {
-        player.x += CLIMB_SPEED;
-        player.y -= CLIMB_SPEED / 2;
-    } else if (player.powerUp === 'jetpack') {
-        player.x += CLIMB_SPEED * 1.5;
         player.y -= CLIMB_SPEED;
+    } else if (player.powerUp === 'jetpack') {
+        player.y -= CLIMB_SPEED * 2;
     } else {
         player.vy += GRAVITY;
         player.y += player.vy;
@@ -212,6 +210,7 @@ function update() {
     }
 
     // Check for terrain collision
+    player.climbing = false;
     terrain.forEach(segment => {
         if (player.x >= segment.x - 15 && player.x <= segment.x + 15 &&
             player.y + player.height >= segment.y - 5 && player.y + player.height <= segment.y + 5) {
@@ -253,12 +252,11 @@ function update() {
     }
 
     // Remove off-screen elements
-    terrain = terrain.filter(segment => segment.x > player.x - 100);
-    obstacles = obstacles.filter(obstacle => obstacle.x > player.x - 100);
-    powerUps = powerUps.filter(powerUp => powerUp.x > player.x - 100);
+    terrain = terrain.filter(segment => segment.x > player.x - canvas.width);
+    obstacles = obstacles.filter(obstacle => obstacle.x > player.x - canvas.width);
+    powerUps = powerUps.filter(powerUp => powerUp.x > player.x - canvas.width);
 
     updateScore();
-    gameSpeed += GAME_SPEED_INCREMENT;
 
     requestAnimationFrame(update);
 }
@@ -268,7 +266,6 @@ function startGame() {
     obstacles = [];
     powerUps = [];
     score = 0;
-    gameSpeed = 2;
     player.x = 100;
     player.y = canvas.height - 150;
     player.vy = 0;
