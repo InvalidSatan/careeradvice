@@ -7,8 +7,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    <style>
+        #gameButton {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background-color: #FFC520;
+            color: #000000;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+    </style>
 </head>
 <body>
+    <button id="gameButton" onclick="openGame()">🎮</button>
     <div class="app-state-header">
         <div class="container">
             <h1 class="text-center">App State Career Advice</h1>
@@ -40,5 +55,10 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function openGame() {
+            window.open("{{ url_for('game') }}", 'AppStateDodgeGame', 'width=800,height=600');
+        }
+    </script>
 </body>
 </html>

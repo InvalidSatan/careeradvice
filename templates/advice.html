@@ -9,7 +9,7 @@
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
     <style>
         #gameButton {
-            position: absolute;
+            position: fixed;
             top: 10px;
             right: 10px;
             background-color: #FFC520;
@@ -18,6 +18,7 @@
             padding: 5px 10px;
             border-radius: 5px;
             cursor: pointer;
+            z-index: 1000;
         }
     </style>
 </head>
@@ -65,5 +66,10 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function openGame() {
+            window.open("{{ url_for('game') }}", 'AppStateDodgeGame', 'width=800,height=600');
+        }
+    </script>
 </body>
 </html>
