@@ -49,6 +49,9 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
+        canvas.width = 800;
+        canvas.height = 600;
+
         const GRAVITY = 0.5;
         const JUMP_FORCE = -12;
         const MOVE_SPEED = 3;
@@ -65,27 +68,62 @@
         };
 
         let terrain = [];
+        let obstacles = [];
+        let collectibles = [];
         let cameraX = 0;
-        const terrainWidth = 10000;
+        let score = 0;
+        let gameOver = false;
+        const terrainWidth = 50000;  // Longer terrain for a full game
 
         function generateTerrain() {
             terrain = new Array(terrainWidth).fill(canvas.height - 100);
             let currentHeight = terrain[0];
+            let upwardTrend = 0;
+
             for (let x = 1; x < terrainWidth; x++) {
                 if (Math.random() < 0.05) {
                     const length = Math.floor(Math.random() * 200) + 50;
-                    const amplitude = Math.random() * 100 - 50;
+                    let amplitude = Math.random() * 100 - 30;
+
+                    // Ensure an overall upward trend
+                    upwardTrend += Math.random() * 20;
+                    amplitude -= upwardTrend / 100;
+
                     for (let i = 0; i < length && x + i < terrainWidth; i++) {
                         const t = i / length;
                         const y = Math.sin(t * Math.PI) * amplitude;
-                        terrain[x + i] = Math.max(100, Math.min(canvas.height - 50, currentHeight + y));
+                        terrain[x + i] = Math.max(100, Math.min(canvas.height - 50, currentHeight + y - upwardTrend / 100));
                     }
                     x += length;
                     currentHeight = terrain[x - 1];
+
+                    // Add obstacles and collectibles
+                    if (Math.random() < 0.3) addObstacle(x, currentHeight);
+                    if (Math.random() < 0.2) addCollectible(x, currentHeight);
                 } else {
                     terrain[x] = currentHeight;
                 }
             }
+        }
+
+        function addObstacle(x, y) {
+            obstacles.push({
+                x: x,
+                y: y - 30,
+                width: 20,
+                height: 30,
+                type: Math.random() < 0.5 ? 'rock' : 'tree'
+            });
+        }
+
+        function addCollectible(x, y) {
+            collectibles.push({
+                x: x,
+                y: y - 50,
+                width: 20,
+                height: 20,
+                type: Math.random() < 0.7 ? 'coin' : 'powerup'
+            });
         }
 
         function drawTerrain() {
@@ -102,6 +140,7 @@
             ctx.closePath();
             ctx.fill();
 
+            // Draw grass
             ctx.strokeStyle = '#2e8b57';
             for (let x = 0; x < canvas.width; x += 5) {
                 const terrainX = Math.floor(x + cameraX);
@@ -120,6 +159,45 @@
             ctx.fillRect(player.x - cameraX, player.y, player.width, player.height);
         }
 
+        function drawObstacles() {
+            obstacles.forEach(obstacle => {
+                if (obstacle.x > cameraX - 100 && obstacle.x < cameraX + canvas.width + 100) {
+                    if (obstacle.type === 'rock') {
+                        ctx.fillStyle = '#808080';
+                        ctx.beginPath();
+                        ctx.arc(obstacle.x - cameraX + obstacle.width / 2, obstacle.y + obstacle.height / 2, obstacle.width / 2, 0, Math.PI * 2);
+                        ctx.fill();
+                    } else {  // tree
+                        ctx.fillStyle = '#8B4513';
+                        ctx.fillRect(obstacle.x - cameraX, obstacle.y + obstacle.height / 2, obstacle.width, obstacle.height / 2);
+                        ctx.fillStyle = '#228B22';
+                        ctx.beginPath();
+                        ctx.moveTo(obstacle.x - cameraX, obstacle.y + obstacle.height / 2);
+                        ctx.lineTo(obstacle.x - cameraX + obstacle.width / 2, obstacle.y);
+                        ctx.lineTo(obstacle.x - cameraX + obstacle.width, obstacle.y + obstacle.height / 2);
+                        ctx.closePath();
+                        ctx.fill();
+                    }
+                }
+            });
+        }
+
+        function drawCollectibles() {
+            collectibles.forEach(collectible => {
+                if (collectible.x > cameraX - 100 && collectible.x < cameraX + canvas.width + 100) {
+                    if (collectible.type === 'coin') {
+                        ctx.fillStyle = '#FFD700';
+                        ctx.beginPath();
+                        ctx.arc(collectible.x - cameraX + collectible.width / 2, collectible.y + collectible.height / 2, collectible.width / 2, 0, Math.PI * 2);
+                        ctx.fill();
+                    } else {  // powerup
+                        ctx.fillStyle = '#FF00FF';
+                        ctx.fillRect(collectible.x - cameraX, collectible.y, collectible.width, collectible.height);
+                    }
+                }
+            });
+        }
+
         function updatePlayer() {
             player.vy += GRAVITY;
             player.x += player.vx;
@@ -132,6 +210,33 @@
                 player.jumping = false;
             }
 
+            // Collision with obstacles
+            obstacles.forEach(obstacle => {
+                if (player.x < obstacle.x + obstacle.width &&
+                    player.x + player.width > obstacle.x &&
+                    player.y < obstacle.y + obstacle.height &&
+                    player.y + player.height > obstacle.y) {
+                    gameOver = true;
+                }
+            });
+
+            // Collecting collectibles
+            collectibles = collectibles.filter(collectible => {
+                if (player.x < collectible.x + collectible.width &&
+                    player.x + player.width > collectible.x &&
+                    player.y < collectible.y + collectible.height &&
+                    player.y + player.height > collectible.y) {
+                    if (collectible.type === 'coin') {
+                        score += 10;
+                    } else {  // powerup
+                        player.vx *= 1.5;  // Speed boost
+                        setTimeout(() => { player.vx = MOVE_SPEED; }, 5000);  // Reset after 5 seconds
+                    }
+                    return false;
+                }
+                return true;
+            });
+
             cameraX = player.x - canvas.width / 3;
         }
 
@@ -142,6 +247,7 @@
             ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+            // Draw distant mountains
             ctx.fillStyle = '#6a8ea6';
             for (let i = 0; i < 3; i++) {
                 ctx.beginPath();
@@ -156,12 +262,31 @@
             }
         }
 
+        function drawScore() {
+            ctx.fillStyle = '#000';
+            ctx.font = '20px Arial';
+            ctx.fillText(`Score: ${score}`, 20, 30);
+        }
+
         function update() {
+            if (gameOver) {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#FFF';
+                ctx.font = '40px Arial';
+                ctx.fillText('Game Over!', canvas.width / 2 - 100, canvas.height / 2);
+                ctx.fillText(`Score: ${score}`, canvas.width / 2 - 70, canvas.height / 2 + 50);
+                return;
+            }
+
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawBackground();
             drawTerrain();
+            drawObstacles();
+            drawCollectibles();
             updatePlayer();
             drawPlayer();
+            drawScore();
             requestAnimationFrame(update);
         }
 
