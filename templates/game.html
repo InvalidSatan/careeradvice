@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Mountain Race with Obstacles</title>
+    <title>AI Mountain Race with Improved Obstacles</title>
     <script src="https://cdn.jsdelivr.net/npm/pixi.js@7.x/dist/pixi.min.js"></script>
     <style>
         body { margin: 0; padding: 0; overflow: hidden; }
@@ -25,7 +25,7 @@
         const GRAVITY = 0.5;
         const JUMP_FORCE = -12;
         const MOVE_SPEED = 3;
-        const AI_DECISION_RATE = 30; // Make decisions every 30 frames
+        const AI_DECISION_RATE = 10; // Make decisions more frequently
 
         // Create game containers
         const worldContainer = new PIXI.Container();
@@ -77,12 +77,12 @@
                 terrainPoints.push(new PIXI.Point(x, y));
 
                 // Add obstacles randomly
-                if (Math.random() < 0.1 && x > 500) { // Start adding obstacles after 500px
+                if (Math.random() < 0.1 && x > 1000) { // Start adding obstacles after 1000px
                     obstacles.push({
                         x: x,
-                        y: y - 30, // Place obstacle slightly above the ground
-                        width: 20,
-                        height: 30
+                        y: y - 40, // Place obstacle slightly higher above the ground
+                        width: 30,
+                        height: 40
                     });
                 }
             }
@@ -130,7 +130,7 @@
             // Draw obstacles
             obstacles.forEach(obstacle => {
                 const obstacleGraphics = new PIXI.Graphics();
-                obstacleGraphics.beginFill(0xFF6600);
+                obstacleGraphics.beginFill(0xFF0000); // Changed to red for better visibility
                 obstacleGraphics.drawRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
                 obstacleGraphics.endFill();
                 obstacleContainer.addChild(obstacleGraphics);
@@ -183,7 +183,7 @@
 
                 // Check for nearby obstacles
                 const nearbyObstacle = obstacles.find(obstacle =>
-                    obstacle.x > player.x && obstacle.x < player.x + 150
+                    obstacle.x > player.x && obstacle.x < player.x + 200
                 );
 
                 // Jump if approaching a higher terrain, to catch up with the other player, or to avoid an obstacle
@@ -218,8 +218,8 @@
 
                     // Check obstacle collision
                     if (checkObstacleCollision(player)) {
-                        player.x -= MOVE_SPEED * 2; // Push player back
-                        player.score -= 5; // Penalty for hitting an obstacle
+                        player.x -= MOVE_SPEED * 5; // Push player back more
+                        player.score = Math.max(0, player.score - 10); // Bigger penalty for hitting an obstacle
                     }
 
                     // AI decision making
