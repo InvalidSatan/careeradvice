@@ -55,16 +55,24 @@ playerImg.onerror = imageLoaded;
 
 function generateTerrain() {
     const lastSegment = terrain[terrain.length - 1] || { x: 0, y: canvas.height - 100, width: 100 };
+    let newY = Math.max(100, Math.min(canvas.height - 100, lastSegment.y + (Math.random() - 0.5) * 30));
+
+    // Ensure smooth transition between segments
+    const maxHeightDifference = 20;
+    if (Math.abs(newY - lastSegment.y) > maxHeightDifference) {
+        newY = lastSegment.y + Math.sign(newY - lastSegment.y) * maxHeightDifference;
+    }
+
     const newSegment = {
         x: lastSegment.x + lastSegment.width,
-        y: Math.max(100, Math.min(canvas.height - 100, lastSegment.y + (Math.random() - 0.5) * 50)),
+        y: newY,
         width: Math.random() * 100 + 50
     };
     terrain.push(newSegment);
 
     // Randomly add pitfalls
-    if (Math.random() < 0.2) {
-        const pitfallWidth = Math.random() * 80 + 40;
+    if (Math.random() < 0.1 && terrain.length > 5) {  // Reduced probability and ensure some initial solid ground
+        const pitfallWidth = Math.random() * 60 + 40;  // Slightly narrower pitfalls
         terrain.push({
             x: newSegment.x + newSegment.width,
             y: canvas.height + 50,  // Below the canvas
@@ -240,15 +248,19 @@ function update() {
     player.vy += GRAVITY;
 
     // Move player
-    player.x += player.vx;
-    player.y += player.vy;
+    const nextX = player.x + player.vx;
+    const nextY = player.y + player.vy;
 
     // Check for terrain collision and climbing
     player.climbing = false;
     let onGround = false;
+    let currentTerrain = null;
+
     for (let segment of terrain) {
-        if (player.x + player.width > segment.x && player.x < segment.x + segment.width) {
-            if (player.y + player.height > segment.y - 5 && player.y + player.height < segment.y + 10) {
+        if (nextX + player.width > segment.x && nextX < segment.x + segment.width) {
+            currentTerrain = segment;
+            // Check for collision with the top of the terrain
+            if (nextY + player.height > segment.y && player.y + player.height <= segment.y) {
                 player.y = segment.y - player.height;
                 player.vy = 0;
                 player.climbing = true;
@@ -256,6 +268,17 @@ function update() {
                 break;
             }
         }
+    }
+
+    // Update player position
+    if (currentTerrain) {
+        player.x = nextX;
+        if (!onGround) {
+            player.y = nextY;
+        }
+    } else {
+        player.x = nextX;
+        player.y = nextY;
     }
 
     // Reset jumping state if on ground
@@ -343,7 +366,6 @@ function startGame() {
 
     requestAnimationFrame(update);
 }
-
 
 function jump() {
     if (!player.jumping && !player.powerUp) {
