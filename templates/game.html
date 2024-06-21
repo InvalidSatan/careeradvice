@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Mountain Race</title>
+    <title>AI Mountain Race with Obstacles</title>
     <script src="https://cdn.jsdelivr.net/npm/pixi.js@7.x/dist/pixi.min.js"></script>
     <style>
         body { margin: 0; padding: 0; overflow: hidden; }
@@ -31,8 +31,9 @@
         const worldContainer = new PIXI.Container();
         const backgroundContainer = new PIXI.Container();
         const terrainContainer = new PIXI.Container();
+        const obstacleContainer = new PIXI.Container();
         const playerContainer = new PIXI.Container();
-        worldContainer.addChild(backgroundContainer, terrainContainer, playerContainer);
+        worldContainer.addChild(backgroundContainer, terrainContainer, obstacleContainer, playerContainer);
         app.stage.addChild(worldContainer);
 
         // AI Players
@@ -53,25 +54,37 @@
         const player1 = createPlayer(0xFF0000, 100); // Red player
         const player2 = createPlayer(0x0000FF, 50);  // Blue player
 
-        // Terrain
+        // Terrain and Obstacles
         const terrainWidth = 50000;
         const terrainResolution = 100;
         const terrainPoints = [];
+        const obstacles = [];
         let terrainGraphics;
 
         // Game state
         let gameState = 'start';
         let cameraX = 0;
 
-        // Generate smooth terrain
+        // Generate smooth terrain with obstacles
         function generateTerrain() {
             terrainPoints.length = 0;
+            obstacles.length = 0;
             let y = app.screen.height - 100;
 
             for (let x = 0; x < terrainWidth; x += terrainResolution) {
                 y += (Math.random() - 0.5) * 50;
                 y = Math.max(100, Math.min(app.screen.height - 50, y));
                 terrainPoints.push(new PIXI.Point(x, y));
+
+                // Add obstacles randomly
+                if (Math.random() < 0.1 && x > 500) { // Start adding obstacles after 500px
+                    obstacles.push({
+                        x: x,
+                        y: y - 30, // Place obstacle slightly above the ground
+                        width: 20,
+                        height: 30
+                    });
+                }
             }
 
             // Ensure the terrain slopes upward overall
@@ -80,11 +93,12 @@
             }
         }
 
-        // Draw terrain
-        function drawTerrain() {
+        // Draw terrain and obstacles
+        function drawTerrainAndObstacles() {
             if (terrainGraphics) {
                 terrainContainer.removeChild(terrainGraphics);
             }
+            obstacleContainer.removeChildren();
 
             terrainGraphics = new PIXI.Graphics();
 
@@ -112,6 +126,15 @@
             }
 
             terrainContainer.addChild(terrainGraphics);
+
+            // Draw obstacles
+            obstacles.forEach(obstacle => {
+                const obstacleGraphics = new PIXI.Graphics();
+                obstacleGraphics.beginFill(0xFF6600);
+                obstacleGraphics.drawRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+                obstacleGraphics.endFill();
+                obstacleContainer.addChild(obstacleGraphics);
+            });
         }
 
         // Background with parallax effect
@@ -138,6 +161,16 @@
             }
         }
 
+        // Check for collision with obstacles
+        function checkObstacleCollision(player) {
+            return obstacles.some(obstacle =>
+                player.x + 15 > obstacle.x &&
+                player.x - 15 < obstacle.x + obstacle.width &&
+                player.y > obstacle.y &&
+                player.y - 50 < obstacle.y + obstacle.height
+            );
+        }
+
         // AI decision making
         function makeAIDecision(player, otherPlayer) {
             const terrainIndex = Math.floor(player.x / terrainResolution);
@@ -148,8 +181,13 @@
                 const currentHeight = terrainPoints[terrainIndex].y;
                 const nextHeight = terrainPoints[nextTerrainIndex].y;
 
-                // Jump if approaching a higher terrain or to catch up with the other player
-                if ((nextHeight < currentHeight - 10 || otherPlayer.x > player.x + 50) && !player.jumping) {
+                // Check for nearby obstacles
+                const nearbyObstacle = obstacles.find(obstacle =>
+                    obstacle.x > player.x && obstacle.x < player.x + 150
+                );
+
+                // Jump if approaching a higher terrain, to catch up with the other player, or to avoid an obstacle
+                if ((nextHeight < currentHeight - 10 || otherPlayer.x > player.x + 50 || nearbyObstacle) && !player.jumping) {
                     player.vy = JUMP_FORCE;
                     player.jumping = true;
                 }
@@ -178,13 +216,19 @@
                         }
                     }
 
+                    // Check obstacle collision
+                    if (checkObstacleCollision(player)) {
+                        player.x -= MOVE_SPEED * 2; // Push player back
+                        player.score -= 5; // Penalty for hitting an obstacle
+                    }
+
                     // AI decision making
                     if (app.ticker.lastTime % AI_DECISION_RATE === 0) {
                         makeAIDecision(player, index === 0 ? player2 : player1);
                     }
 
                     // Update score
-                    player.score = Math.floor(player.x / 10);
+                    player.score = Math.max(0, Math.floor(player.x / 10));
                 });
 
                 // Update camera position to follow the leading player
@@ -204,7 +248,7 @@
         function setup() {
             createBackground();
             generateTerrain();
-            drawTerrain();
+            drawTerrainAndObstacles();
 
             app.ticker.add(update);
 
