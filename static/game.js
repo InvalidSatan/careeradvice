@@ -18,12 +18,22 @@ let gameLoop;
 let gameActive = false;
 
 function generatePath() {
-    const segment = {
-        x: Math.max(0, Math.min(canvas.width - pathWidth, path.length ? path[path.length - 1].x + (Math.random() - 0.5) * 100 : canvas.width / 2 - pathWidth / 2)),
-        y: -100,
+    if (path.length === 0) {
+        path.push({
+            x: canvas.width / 2 - pathWidth / 2,
+            y: canvas.height,
+            width: pathWidth
+        });
+    }
+
+    const lastSegment = path[path.length - 1];
+    const newX = Math.max(0, Math.min(canvas.width - pathWidth, lastSegment.x + (Math.random() - 0.5) * 50));
+
+    path.push({
+        x: newX,
+        y: lastSegment.y - 100,
         width: pathWidth
-    };
-    path.push(segment);
+    });
 }
 
 function drawPlayer() {
@@ -34,24 +44,35 @@ function drawPlayer() {
 function drawPath() {
     ctx.fillStyle = '#000000';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+
     ctx.fillStyle = '#F8F9FA';
-    path.forEach(segment => {
-        ctx.fillRect(segment.x, segment.y, segment.width, 120);
-    });
+    for (let i = 0; i < path.length - 1; i++) {
+        const current = path[i];
+        const next = path[i + 1];
+
+        ctx.beginPath();
+        ctx.moveTo(current.x, current.y);
+        ctx.lineTo(current.x + current.width, current.y);
+        ctx.lineTo(next.x + next.width, next.y);
+        ctx.lineTo(next.x, next.y);
+        ctx.closePath();
+        ctx.fill();
+    }
 }
 
 function movePath() {
     path.forEach(segment => {
         segment.y += gameSpeed;
     });
-    path = path.filter(segment => segment.y < canvas.height);
-    if (path.length < 10) {
+    path = path.filter(segment => segment.y < canvas.height + 100);
+
+    while (path.length < 10) {
         generatePath();
     }
 }
 
 function checkCollision() {
-    const playerSegment = path.find(segment => segment.y > player.y - player.height / 2 && segment.y < player.y + player.height / 2);
+    const playerSegment = path.find(segment => segment.y > player.y && segment.y - 100 < player.y);
     if (playerSegment) {
         return player.x - player.width / 2 < playerSegment.x || player.x + player.width / 2 > playerSegment.x + playerSegment.width;
     }
@@ -83,19 +104,24 @@ function gameOver() {
 }
 
 function update() {
+    if (!gameActive) return;
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawPath();
     drawPlayer();
     movePath();
     updateScore();
+
     if (checkCollision()) {
         gameOver();
         return;
     }
+
     if (score % 100 === 0) {
         gameSpeed += 0.1;
         pathWidth = Math.max(50, pathWidth - 1);
     }
+
     requestAnimationFrame(update);
 }
 
@@ -108,10 +134,12 @@ function startGame() {
     gameActive = true;
     document.getElementById('scoreDisplay').innerText = 'Score: 0';
     document.getElementById('highScoreDisplay').innerText = `High Score: ${highScore}`;
+
     for (let i = 0; i < 10; i++) {
         generatePath();
     }
-    update();
+
+    requestAnimationFrame(update);
 }
 
 canvas.addEventListener('mousemove', (e) => {
