@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="56f0665a-e9f1-4aac-9caa-f9b2b99e3f62" name="Changes" comment="Updated game to add theme and further improve pathing and difficulty scaling.">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="56f0665a-e9f1-4aac-9caa-f9b2b99e3f62" name="Changes" comment="Updated game with improved graphics and added jump functionality." />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -313,7 +311,15 @@
       <option name="project" value="LOCAL" />
       <updated>1718992763926</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="Updated game with improved graphics and added jump functionality.">
+      <option name="closed" value="true" />
+      <created>1718993600743</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1718993600743</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -345,7 +351,8 @@
     <MESSAGE value="Changed game to increase difficulty and fix &quot;Play Again&quot; not working." />
     <MESSAGE value="Update game.js to improve pathing." />
     <MESSAGE value="Updated game to add theme and further improve pathing and difficulty scaling." />
-    <option name="LAST_COMMIT_MESSAGE" value="Updated game to add theme and further improve pathing and difficulty scaling." />
+    <MESSAGE value="Updated game with improved graphics and added jump functionality." />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated game with improved graphics and added jump functionality." />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/CareerAdvice_AppState_AI$CareerAdvice.coverage" NAME="CareerAdvice Coverage Results" MODIFIED="1717608747656" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
