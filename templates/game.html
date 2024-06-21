@@ -28,16 +28,17 @@
         const MOVE_SPEED = 3;
 
         // Create game containers
-        const gameContainer = new PIXI.Container();
+        const worldContainer = new PIXI.Container();
         const backgroundContainer = new PIXI.Container();
         const terrainContainer = new PIXI.Container();
         const playerContainer = new PIXI.Container();
-        app.stage.addChild(backgroundContainer, terrainContainer, playerContainer, gameContainer);
+        worldContainer.addChild(backgroundContainer, terrainContainer, playerContainer);
+        app.stage.addChild(worldContainer);
 
         // Player
         const player = new PIXI.Graphics();
         player.beginFill(0xFFC520);
-        player.drawRect(0, 0, 30, 50);
+        player.drawRect(-15, -25, 30, 50);
         player.endFill();
         player.x = 100;
         player.y = app.screen.height - 50;
@@ -111,11 +112,11 @@
         function createBackground() {
             const skyGradient = new PIXI.Graphics();
             skyGradient.beginFill(0x87CEEB);
-            skyGradient.drawRect(0, 0, app.screen.width, app.screen.height);
+            skyGradient.drawRect(0, 0, terrainWidth, app.screen.height);
             skyGradient.endFill();
             backgroundContainer.addChild(skyGradient);
 
-            for (let i = 0; i < 3; i++) {
+            for (let i = 0; i < terrainWidth / 500; i++) {
                 const mountain = new PIXI.Graphics();
                 mountain.beginFill(0x6a8ea6);
                 mountain.moveTo(0, app.screen.height);
@@ -126,7 +127,7 @@
                 mountain.lineTo(600, app.screen.height);
                 mountain.endFill();
                 mountain.x = i * 500;
-                mountain.tint = 0x6a8ea6 - i * 0x111111; // Vary mountain colors slightly
+                mountain.tint = 0x6a8ea6 - (i % 3) * 0x111111; // Vary mountain colors slightly
                 backgroundContainer.addChild(mountain);
             }
         }
@@ -138,23 +139,23 @@
                 player.vy += GRAVITY;
                 player.y += player.vy;
 
-                // Move player and camera
+                // Move player
                 player.x += MOVE_SPEED;
-                cameraX = player.x - app.screen.width / 3;
 
                 // Check ground collision
                 const terrainIndex = Math.floor(player.x / terrainResolution);
                 if (terrainIndex >= 0 && terrainIndex < terrainPoints.length) {
                     const groundHeight = terrainPoints[terrainIndex].y;
-                    if (player.y + player.height > groundHeight) {
-                        player.y = groundHeight - player.height;
+                    if (player.y > groundHeight) {
+                        player.y = groundHeight;
                         player.vy = 0;
                         player.jumping = false;
                     }
                 }
 
                 // Update camera position
-                gameContainer.x = -cameraX;
+                cameraX = player.x - app.screen.width / 3;
+                worldContainer.x = -cameraX;
                 backgroundContainer.x = -cameraX * 0.5; // Parallax effect
 
                 // Update score
@@ -176,6 +177,8 @@
                 player.vy = 0;
                 score = 0;
                 cameraX = 0;
+                worldContainer.x = 0;
+                backgroundContainer.x = 0;
             }
         }
 
