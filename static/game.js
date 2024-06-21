@@ -53,22 +53,35 @@ playerImg.onload = imageLoaded;
 playerImg.onerror = imageLoaded;
 
 function generateTerrain() {
-    const lastSegment = terrain[terrain.length - 1] || { x: 0, y: canvas.height - 100 };
+    const lastSegment = terrain[terrain.length - 1] || { x: 0, y: canvas.height - 100, width: 100 };
     const newSegment = {
-        x: lastSegment.x + Math.random() * 100 + 50,
-        y: Math.max(100, Math.min(canvas.height - 100, lastSegment.y + (Math.random() - 0.5) * 100))
+        x: lastSegment.x + lastSegment.width,
+        y: Math.max(100, Math.min(canvas.height - 100, lastSegment.y + (Math.random() - 0.5) * 50)),
+        width: Math.random() * 100 + 50
     };
     terrain.push(newSegment);
+
+    // Randomly add pitfalls
+    if (Math.random() < 0.2) {
+        const pitfallWidth = Math.random() * 50 + 30;
+        terrain.push({
+            x: newSegment.x + newSegment.width,
+            y: canvas.height + 50,  // Below the canvas
+            width: pitfallWidth
+        });
+    }
 }
 
 function generateObstacle() {
     if (Math.random() < 0.1) {
         const lastTerrainSegment = terrain[terrain.length - 1];
+        const obstacleType = Math.random() < 0.33 ? 'rock' : Math.random() < 0.66 ? 'tree' : 'bear';
         obstacles.push({
-            x: lastTerrainSegment.x,
-            y: lastTerrainSegment.y - Math.random() * 100 - 30,
+            x: lastTerrainSegment.x + Math.random() * lastTerrainSegment.width,
+            y: lastTerrainSegment.y - 30,
             width: 30,
-            height: 30
+            height: 30,
+            type: obstacleType
         });
     }
 }
@@ -78,8 +91,8 @@ function generatePowerUp() {
         const lastTerrainSegment = terrain[terrain.length - 1];
         const type = Math.random() < 0.5 ? 'jetpack' : 'pickaxe';
         powerUps.push({
-            x: lastTerrainSegment.x,
-            y: lastTerrainSegment.y - Math.random() * 100 - 50,
+            x: lastTerrainSegment.x + Math.random() * lastTerrainSegment.width,
+            y: lastTerrainSegment.y - 50,
             width: 30,
             height: 30,
             type: type
@@ -88,23 +101,42 @@ function generatePowerUp() {
 }
 
 function drawTerrain() {
-    ctx.strokeStyle = '#8B4513';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    terrain.forEach((segment, index) => {
-        if (index === 0) {
-            ctx.moveTo(segment.x - player.x + 100, segment.y);
-        } else {
-            ctx.lineTo(segment.x - player.x + 100, segment.y);
-        }
+    ctx.fillStyle = '#8B4513';
+    terrain.forEach(segment => {
+        ctx.fillRect(segment.x - player.x + 100, segment.y, segment.width, canvas.height - segment.y);
     });
-    ctx.stroke();
 }
 
 function drawObstacles() {
-    ctx.fillStyle = '#808080';
     obstacles.forEach(obstacle => {
-        ctx.fillRect(obstacle.x - player.x + 100, obstacle.y, obstacle.width, obstacle.height);
+        switch(obstacle.type) {
+            case 'rock':
+                ctx.fillStyle = '#808080';
+                ctx.beginPath();
+                ctx.arc(obstacle.x - player.x + 100 + obstacle.width / 2, obstacle.y + obstacle.height / 2, obstacle.width / 2, 0, Math.PI * 2);
+                ctx.fill();
+                break;
+            case 'tree':
+                ctx.fillStyle = '#8B4513';
+                ctx.fillRect(obstacle.x - player.x + 100, obstacle.y, obstacle.width / 3, obstacle.height);
+                ctx.fillStyle = '#228B22';
+                ctx.beginPath();
+                ctx.moveTo(obstacle.x - player.x + 100 - obstacle.width / 2, obstacle.y);
+                ctx.lineTo(obstacle.x - player.x + 100 + obstacle.width / 2, obstacle.y);
+                ctx.lineTo(obstacle.x - player.x + 100, obstacle.y - obstacle.height);
+                ctx.closePath();
+                ctx.fill();
+                break;
+            case 'bear':
+                ctx.fillStyle = '#8B4513';
+                ctx.fillRect(obstacle.x - player.x + 100, obstacle.y, obstacle.width, obstacle.height);
+                ctx.fillStyle = '#000000';
+                ctx.beginPath();
+                ctx.arc(obstacle.x - player.x + 100 + obstacle.width * 0.2, obstacle.y + obstacle.height * 0.2, obstacle.width * 0.1, 0, Math.PI * 2);
+                ctx.arc(obstacle.x - player.x + 100 + obstacle.width * 0.8, obstacle.y + obstacle.height * 0.2, obstacle.width * 0.1, 0, Math.PI * 2);
+                ctx.fill();
+                break;
+        }
     });
 }
 
@@ -135,8 +167,9 @@ function drawPlayer() {
 
 function drawBackground() {
     const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-    gradient.addColorStop(0, "#87CEEB");
-    gradient.addColorStop(1, "#E0F6FF");
+    const progress = Math.min(1, player.x / 10000);  // Assume 10000 is the "top" of the mountain
+    gradient.addColorStop(0, `rgb(${135 - 100 * progress}, ${206 - 100 * progress}, ${235 - 100 * progress})`);
+    gradient.addColorStop(1, `rgb(${224 - 100 * progress}, ${246 - 100 * progress}, ${255 - 100 * progress})`);
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -154,6 +187,17 @@ function drawBackground() {
                 canvas.height
             );
         }
+    }
+
+    // Draw snow-capped peaks in the distance
+    ctx.fillStyle = '#FFFFFF';
+    for (let i = 0; i < 3; i++) {
+        ctx.beginPath();
+        ctx.moveTo(i * 300 - (player.x % 300), canvas.height - 100 - i * 50);
+        ctx.lineTo(i * 300 + 150 - (player.x % 300), canvas.height - 300 - i * 50);
+        ctx.lineTo(i * 300 + 300 - (player.x % 300), canvas.height - 100 - i * 50);
+        ctx.closePath();
+        ctx.fill();
     }
 }
 
@@ -202,15 +246,16 @@ function update() {
 
     // Check for terrain collision and climbing
     player.climbing = false;
-    terrain.forEach(segment => {
-        if (player.x + player.width > segment.x && player.x < segment.x + 10) {
-            if (player.y + player.height > segment.y - 5 && player.y < segment.y) {
+    for (let segment of terrain) {
+        if (player.x + player.width > segment.x && player.x < segment.x + segment.width) {
+            if (player.y + player.height > segment.y - 5 && player.y + player.height < segment.y + 10) {
                 player.y = segment.y - player.height;
                 player.vy = 0;
                 player.climbing = true;
+                break;
             }
         }
-    });
+    }
 
     // Climbing mechanics
     if (player.climbing) {
@@ -219,7 +264,6 @@ function update() {
         } else {
             player.vx = CLIMB_SPEED;
         }
-        player.vy = -CLIMB_SPEED;
     } else {
         player.vx = MOVE_SPEED;
     }
@@ -230,14 +274,8 @@ function update() {
         player.vx = MOVE_SPEED * 1.5;
     }
 
-    // Check for ground collision
-    if (player.y + player.height > canvas.height) {
-        gameOver();
-        return;
-    }
-
-    // Check for obstacle collision
-    if (obstacles.some(obstacle =>
+    // Check for falling off the mountain or hitting obstacles
+    if (player.y > canvas.height || obstacles.some(obstacle =>
         player.x + player.width > obstacle.x &&
         player.x < obstacle.x + obstacle.width &&
         player.y + player.height > obstacle.y &&
@@ -261,16 +299,16 @@ function update() {
     });
 
     // Generate new terrain, obstacles, and power-ups
-    while (terrain[terrain.length - 1].x - player.x < canvas.width) {
+    while (terrain[terrain.length - 1].x - player.x < canvas.width * 2) {
         generateTerrain();
         generateObstacle();
         generatePowerUp();
     }
 
     // Remove off-screen elements
-    terrain = terrain.filter(segment => segment.x > player.x - canvas.width);
-    obstacles = obstacles.filter(obstacle => obstacle.x > player.x - canvas.width);
-    powerUps = powerUps.filter(powerUp => powerUp.x > player.x - canvas.width);
+    terrain = terrain.filter(segment => segment.x + segment.width > player.x - 100);
+    obstacles = obstacles.filter(obstacle => obstacle.x > player.x - 100);
+    powerUps = powerUps.filter(powerUp => powerUp.x > player.x - 100);
 
     updateScore();
 
@@ -278,7 +316,7 @@ function update() {
 }
 
 function startGame() {
-    terrain = [{ x: 0, y: canvas.height - 100 }];
+    terrain = [{ x: 0, y: canvas.height - 100, width: 200 }];
     obstacles = [];
     powerUps = [];
     score = 0;

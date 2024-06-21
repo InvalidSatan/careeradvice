@@ -50,14 +50,19 @@
     <div id="scoreDisplay">Score: 0</div>
     <div id="highScoreDisplay">High Score: 0</div>
     <div id="instructions">
-    Objective: Climb as high as possible on the mountain!<br>
-    Controls: Click or press SPACE to jump when not climbing.<br>
-    The climber automatically moves right and climbs when touching terrain.<br>
-    Avoid obstacles (gray blocks) and don't fall off the mountain!<br>
-    Collect power-ups:<br>
-    - Jetpack (orange): Fly upwards faster for 5 seconds<br>
-    - Pickaxe (silver): Climb faster for 5 seconds<br>
-    Your score increases as you climb higher. Good luck!
+        Objective: Climb as high as possible on the mountain!<br>
+        Controls: Click or press SPACE to jump when not climbing.<br>
+        The climber automatically moves right and climbs when touching terrain.<br>
+        Avoid obstacles:<br>
+        - Rocks: Gray circular obstacles<br>
+        - Fallen trees: Green triangular obstacles<br>
+        - Bears: Brown square obstacles<br>
+        - Pitfalls: Gaps in the terrain<br>
+        Collect power-ups:<br>
+        - Jetpack (orange): Fly upwards faster for 5 seconds<br>
+        - Pickaxe (silver): Climb faster for 5 seconds<br>
+        Your score increases as you climb higher. The sky will change color to show your progress!<br>
+        Good luck, and happy climbing!
     </div>
     <script src="{{ url_for('static', filename='game.js') }}"></script>
 </body>
