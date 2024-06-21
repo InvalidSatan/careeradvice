@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sonic-Style Mountain Climber</title>
+    <title>AI Mountain Race</title>
     <script src="https://cdn.jsdelivr.net/npm/pixi.js@7.x/dist/pixi.min.js"></script>
     <style>
         body { margin: 0; padding: 0; overflow: hidden; }
@@ -13,7 +13,6 @@
 <body>
     <div id="gameCanvas"></div>
     <script>
-        // Game code will go here
         // Initialize Pixi Application
         const app = new PIXI.Application({
             width: 800,
@@ -26,6 +25,7 @@
         const GRAVITY = 0.5;
         const JUMP_FORCE = -12;
         const MOVE_SPEED = 3;
+        const AI_DECISION_RATE = 30; // Make decisions every 30 frames
 
         // Create game containers
         const worldContainer = new PIXI.Container();
@@ -35,16 +35,23 @@
         worldContainer.addChild(backgroundContainer, terrainContainer, playerContainer);
         app.stage.addChild(worldContainer);
 
-        // Player
-        const player = new PIXI.Graphics();
-        player.beginFill(0xFFC520);
-        player.drawRect(-15, -25, 30, 50);
-        player.endFill();
-        player.x = 100;
-        player.y = app.screen.height - 50;
-        player.vy = 0;
-        player.jumping = false;
-        playerContainer.addChild(player);
+        // AI Players
+        function createPlayer(color, x) {
+            const player = new PIXI.Graphics();
+            player.beginFill(color);
+            player.drawRect(-15, -25, 30, 50);
+            player.endFill();
+            player.x = x;
+            player.y = app.screen.height - 50;
+            player.vy = 0;
+            player.jumping = false;
+            player.score = 0;
+            playerContainer.addChild(player);
+            return player;
+        }
+
+        const player1 = createPlayer(0xFF0000, 100); // Red player
+        const player2 = createPlayer(0x0000FF, 50);  // Blue player
 
         // Terrain
         const terrainWidth = 50000;
@@ -54,7 +61,6 @@
 
         // Game state
         let gameState = 'start';
-        let score = 0;
         let cameraX = 0;
 
         // Generate smooth terrain
@@ -132,53 +138,65 @@
             }
         }
 
-        // Update game state
-        function update(delta) {
-            if (gameState === 'playing') {
-                // Apply gravity
-                player.vy += GRAVITY;
-                player.y += player.vy;
+        // AI decision making
+        function makeAIDecision(player, otherPlayer) {
+            const terrainIndex = Math.floor(player.x / terrainResolution);
+            const nextTerrainIndex = Math.floor((player.x + 100) / terrainResolution);
 
-                // Move player
-                player.x += MOVE_SPEED;
+            if (terrainIndex >= 0 && terrainIndex < terrainPoints.length &&
+                nextTerrainIndex >= 0 && nextTerrainIndex < terrainPoints.length) {
+                const currentHeight = terrainPoints[terrainIndex].y;
+                const nextHeight = terrainPoints[nextTerrainIndex].y;
 
-                // Check ground collision
-                const terrainIndex = Math.floor(player.x / terrainResolution);
-                if (terrainIndex >= 0 && terrainIndex < terrainPoints.length) {
-                    const groundHeight = terrainPoints[terrainIndex].y;
-                    if (player.y > groundHeight) {
-                        player.y = groundHeight;
-                        player.vy = 0;
-                        player.jumping = false;
-                    }
+                // Jump if approaching a higher terrain or to catch up with the other player
+                if ((nextHeight < currentHeight - 10 || otherPlayer.x > player.x + 50) && !player.jumping) {
+                    player.vy = JUMP_FORCE;
+                    player.jumping = true;
                 }
-
-                // Update camera position
-                cameraX = player.x - app.screen.width / 3;
-                worldContainer.x = -cameraX;
-                backgroundContainer.x = -cameraX * 0.5; // Parallax effect
-
-                // Update score
-                score = Math.floor(player.x / 10);
             }
         }
 
-        // Jump function
-        function jump() {
-            if (gameState === 'start') {
-                gameState = 'playing';
-            } else if (gameState === 'playing' && !player.jumping) {
-                player.vy = JUMP_FORCE;
-                player.jumping = true;
-            } else if (gameState === 'gameOver') {
-                gameState = 'playing';
-                player.x = 100;
-                player.y = app.screen.height - 50;
-                player.vy = 0;
-                score = 0;
-                cameraX = 0;
-                worldContainer.x = 0;
-                backgroundContainer.x = 0;
+        // Update game state
+        function update(delta) {
+            if (gameState === 'playing') {
+                [player1, player2].forEach((player, index) => {
+                    // Apply gravity
+                    player.vy += GRAVITY;
+                    player.y += player.vy;
+
+                    // Move player
+                    player.x += MOVE_SPEED;
+
+                    // Check ground collision
+                    const terrainIndex = Math.floor(player.x / terrainResolution);
+                    if (terrainIndex >= 0 && terrainIndex < terrainPoints.length) {
+                        const groundHeight = terrainPoints[terrainIndex].y;
+                        if (player.y > groundHeight) {
+                            player.y = groundHeight;
+                            player.vy = 0;
+                            player.jumping = false;
+                        }
+                    }
+
+                    // AI decision making
+                    if (app.ticker.lastTime % AI_DECISION_RATE === 0) {
+                        makeAIDecision(player, index === 0 ? player2 : player1);
+                    }
+
+                    // Update score
+                    player.score = Math.floor(player.x / 10);
+                });
+
+                // Update camera position to follow the leading player
+                const leadingPlayer = player1.x > player2.x ? player1 : player2;
+                cameraX = leadingPlayer.x - app.screen.width / 3;
+                worldContainer.x = -cameraX;
+                backgroundContainer.x = -cameraX * 0.5; // Parallax effect
+
+                // Check for game over condition
+                if (Math.max(player1.x, player2.x) >= terrainWidth - 100) {
+                    gameState = 'gameOver';
+                }
             }
         }
 
@@ -191,12 +209,29 @@
             app.ticker.add(update);
 
             // Event listeners
-            window.addEventListener('click', jump);
+            window.addEventListener('click', startGame);
             window.addEventListener('keydown', (e) => {
                 if (e.code === 'Space') {
-                    jump();
+                    startGame();
                 }
             });
+        }
+
+        function startGame() {
+            if (gameState === 'start' || gameState === 'gameOver') {
+                gameState = 'playing';
+                player1.x = 100;
+                player1.y = app.screen.height - 50;
+                player1.vy = 0;
+                player1.score = 0;
+                player2.x = 50;
+                player2.y = app.screen.height - 50;
+                player2.vy = 0;
+                player2.score = 0;
+                cameraX = 0;
+                worldContainer.x = 0;
+                backgroundContainer.x = 0;
+            }
         }
 
         // Start the game
