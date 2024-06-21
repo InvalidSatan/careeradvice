@@ -1,54 +1,35 @@
-body {
-    background-color: #F8F9FA;
-    font-family: 'Roboto', Arial, sans-serif;
-}
+/* ... (keep all previous CSS) ... */
 
 .app-state-header {
     background-color: #000000; /* App State Black */
-    color: #FFC520; /* App State Gold */
     padding: 30px 0;
     margin-bottom: 30px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.btn-app-state {
-    background-color: #FFC520; /* App State Gold */
-    color: #000000; /* App State Black */
-    border: none;
-    padding: 10px 20px;
-    transition: background-color 0.3s ease;
+.app-state-header h1 {
+    color: #FFC520; /* App State Gold */
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5); /* Add shadow for better readability */
 }
 
-.btn-app-state:hover {
-    background-color: #e6b100; /* Darker shade of App State Gold */
-    color: #000000; /* App State Black */
+/* Center the tabs */
+.nav-tabs {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    border-bottom: none;
 }
 
-.card {
-    border: none;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    margin-bottom: 20px;
-}
-
-.card-body {
-    padding: 30px;
-}
-
-.form-control {
-    border-radius: 0;
-    border: 1px solid #ced4da;
-}
-
-.form-control:focus {
-    box-shadow: 0 0 0 0.2rem rgba(255,197,32,0.25); /* App State Gold with opacity */
-    border-color: #FFC520; /* App State Gold */
+.nav-tabs .nav-item {
+    margin-bottom: 10px;
 }
 
 .nav-tabs .nav-link {
     color: #000000; /* App State Black */
     border: none;
     border-bottom: 2px solid transparent;
-    transition: border-color 0.3s ease;
+    transition: border-color 0.3s ease, color 0.3s ease;
+    margin: 0 10px;
 }
 
 .nav-tabs .nav-link.active,
@@ -58,31 +39,9 @@ body {
     color: #003366; /* App State Dark Blue */
 }
 
-.tab-content {
-    padding-top: 20px;
+/* Ensure consistent button styling */
+.btn-app-state, .btn-secondary {
+    margin: 5px;
 }
 
-/* Additional styling for better contrast and readability */
-h1, h2, h3, h4, h5, h6 {
-    color: #000000; /* App State Black */
-}
-
-a {
-    color: #003366; /* App State Dark Blue */
-}
-
-a:hover {
-    color: #FFC520; /* App State Gold */
-}
-
-.btn-secondary {
-    background-color: #003366; /* App State Dark Blue */
-    border-color: #003366; /* App State Dark Blue */
-    color: #FFFFFF;
-}
-
-.btn-secondary:hover {
-    background-color: #002144; /* Darker shade of App State Dark Blue */
-    border-color: #002144;
-    color: #FFFFFF;
-}
+/* ... (keep all remaining CSS) ... */
