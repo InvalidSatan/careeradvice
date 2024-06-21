@@ -6,7 +6,6 @@ import logging
 import json
 from openai import AzureOpenAI
 
-
 # Configure logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -124,6 +123,11 @@ def generate_advice():
     advice = generate_career_advice(major, interests)
     professions = extract_professions(advice)
     return render_template('advice.html', professions=professions, major=major)
+
+
+@app.route('/game')
+def game():
+    return render_template('game.html')
 
 
 def generate_career_advice(major, interests):

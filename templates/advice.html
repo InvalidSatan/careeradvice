@@ -7,8 +7,22 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    <style>
+        #gameButton {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #FFC520;
+            color: #000000;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
+    <button id="gameButton" onclick="openGame()">🎮</button>
     <div class="app-state-header">
         <div class="container">
             <h1 class="text-center">Career Advice for {{ major }}</h1>
