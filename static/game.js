@@ -4,58 +4,58 @@ const ctx = canvas.getContext('2d');
 const player = {
     x: canvas.width / 2,
     y: canvas.height - 30,
-    radius: 15,
+    width: 20,
+    height: 20,
     color: '#FFC520'
 };
 
-let obstacles = [];
+let path = [];
 let score = 0;
 let highScore = localStorage.getItem('highScore') || 0;
 let gameSpeed = 2;
+let pathWidth = 200;
 let gameLoop;
+let gameActive = false;
+
+function generatePath() {
+    const segment = {
+        x: Math.max(0, Math.min(canvas.width - pathWidth, path.length ? path[path.length - 1].x + (Math.random() - 0.5) * 100 : canvas.width / 2 - pathWidth / 2)),
+        y: -100,
+        width: pathWidth
+    };
+    path.push(segment);
+}
 
 function drawPlayer() {
-    ctx.beginPath();
-    ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
     ctx.fillStyle = player.color;
-    ctx.fill();
-    ctx.closePath();
+    ctx.fillRect(player.x - player.width / 2, player.y - player.height / 2, player.width, player.height);
 }
 
-function drawObstacles() {
-    obstacles.forEach(obstacle => {
-        ctx.beginPath();
-        ctx.rect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
-        ctx.fillStyle = '#000000';
-        ctx.fill();
-        ctx.closePath();
+function drawPath() {
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#F8F9FA';
+    path.forEach(segment => {
+        ctx.fillRect(segment.x, segment.y, segment.width, 120);
     });
 }
 
-function moveObstacles() {
-    obstacles.forEach(obstacle => {
-        obstacle.y += gameSpeed;
+function movePath() {
+    path.forEach(segment => {
+        segment.y += gameSpeed;
     });
-    obstacles = obstacles.filter(obstacle => obstacle.y < canvas.height);
-}
-
-function createObstacle() {
-    const width = Math.random() * (50 - 20) + 20;
-    obstacles.push({
-        x: Math.random() * (canvas.width - width),
-        y: 0,
-        width: width,
-        height: 20
-    });
+    path = path.filter(segment => segment.y < canvas.height);
+    if (path.length < 10) {
+        generatePath();
+    }
 }
 
 function checkCollision() {
-    return obstacles.some(obstacle => {
-        return player.x < obstacle.x + obstacle.width &&
-               player.x + player.radius > obstacle.x &&
-               player.y < obstacle.y + obstacle.height &&
-               player.y + player.radius > obstacle.y;
-    });
+    const playerSegment = path.find(segment => segment.y > player.y - player.height / 2 && segment.y < player.y + player.height / 2);
+    if (playerSegment) {
+        return player.x - player.width / 2 < playerSegment.x || player.x + player.width / 2 > playerSegment.x + playerSegment.width;
+    }
+    return false;
 }
 
 function updateScore() {
@@ -69,8 +69,8 @@ function updateScore() {
 }
 
 function gameOver() {
-    clearInterval(gameLoop);
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+    gameActive = false;
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.font = '48px Roboto';
     ctx.fillStyle = '#FFC520';
@@ -84,37 +84,45 @@ function gameOver() {
 
 function update() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawPath();
     drawPlayer();
-    drawObstacles();
-    moveObstacles();
+    movePath();
     updateScore();
     if (checkCollision()) {
         gameOver();
+        return;
     }
     if (score % 100 === 0) {
         gameSpeed += 0.1;
+        pathWidth = Math.max(50, pathWidth - 1);
     }
+    requestAnimationFrame(update);
 }
 
 function startGame() {
-    obstacles = [];
+    path = [];
     score = 0;
     gameSpeed = 2;
+    pathWidth = 200;
     player.x = canvas.width / 2;
+    gameActive = true;
     document.getElementById('scoreDisplay').innerText = 'Score: 0';
     document.getElementById('highScoreDisplay').innerText = `High Score: ${highScore}`;
-    clearInterval(gameLoop);
-    gameLoop = setInterval(update, 20);
-    setInterval(createObstacle, 1000);
+    for (let i = 0; i < 10; i++) {
+        generatePath();
+    }
+    update();
 }
 
 canvas.addEventListener('mousemove', (e) => {
-    const rect = canvas.getBoundingClientRect();
-    player.x = e.clientX - rect.left;
+    if (gameActive) {
+        const rect = canvas.getBoundingClientRect();
+        player.x = e.clientX - rect.left;
+    }
 });
 
 canvas.addEventListener('click', () => {
-    if (!gameLoop) {
+    if (!gameActive) {
         startGame();
     }
 });
@@ -123,6 +131,6 @@ document.getElementById('highScoreDisplay').innerText = `High Score: ${highScore
 ctx.font = '48px Roboto';
 ctx.fillStyle = '#000000';
 ctx.textAlign = 'center';
-ctx.fillText('App State Dodge', canvas.width / 2, canvas.height / 2);
+ctx.fillText('App State Path Runner', canvas.width / 2, canvas.height / 2);
 ctx.font = '24px Roboto';
 ctx.fillText('Click to start', canvas.width / 2, canvas.height / 2 + 40);
