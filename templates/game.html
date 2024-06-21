@@ -72,8 +72,24 @@
         let collectibles = [];
         let cameraX = 0;
         let score = 0;
-        let gameOver = false;
-        const terrainWidth = 50000;  // Longer terrain for a full game
+        let gameState = 'start'; // 'start', 'playing', or 'gameOver'
+        const terrainWidth = 50000;
+
+        function initGame() {
+            player.x = 100;
+            player.y = canvas.height - 50;
+            player.vx = MOVE_SPEED;
+            player.vy = 0;
+            player.jumping = false;
+
+            terrain = [];
+            obstacles = [];
+            collectibles = [];
+            cameraX = 0;
+            score = 0;
+
+            generateTerrain();
+        }
 
         function generateTerrain() {
             terrain = new Array(terrainWidth).fill(canvas.height - 100);
@@ -125,6 +141,28 @@
                 type: Math.random() < 0.7 ? 'coin' : 'powerup'
             });
         }
+
+        function drawStartScreen() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#FFF';
+            ctx.font = '40px Arial';
+            ctx.fillText('Mountain Climber', canvas.width / 2 - 150, canvas.height / 2 - 50);
+            ctx.font = '20px Arial';
+            ctx.fillText('Click or press Space to start', canvas.width / 2 - 120, canvas.height / 2 + 20);
+        }
+
+        function drawGameOverScreen() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#FFF';
+            ctx.font = '40px Arial';
+            ctx.fillText('Game Over!', canvas.width / 2 - 100, canvas.height / 2 - 50);
+            ctx.fillText(`Score: ${score}`, canvas.width / 2 - 70, canvas.height / 2 + 20);
+            ctx.font = '20px Arial';
+            ctx.fillText('Click or press Space to restart', canvas.width / 2 - 130, canvas.height / 2 + 70);
+        }
+
 
         function drawTerrain() {
             ctx.fillStyle = '#5b3e26';
@@ -199,6 +237,8 @@
         }
 
         function updatePlayer() {
+            if (gameState !== 'playing') return;
+
             player.vy += GRAVITY;
             player.x += player.vx;
             player.y += player.vy;
@@ -216,7 +256,7 @@
                     player.x + player.width > obstacle.x &&
                     player.y < obstacle.y + obstacle.height &&
                     player.y + player.height > obstacle.y) {
-                    gameOver = true;
+                    gameState = 'gameOver';
                 }
             });
 
@@ -269,31 +309,35 @@
         }
 
         function update() {
-            if (gameOver) {
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = '#FFF';
-                ctx.font = '40px Arial';
-                ctx.fillText('Game Over!', canvas.width / 2 - 100, canvas.height / 2);
-                ctx.fillText(`Score: ${score}`, canvas.width / 2 - 70, canvas.height / 2 + 50);
-                return;
-            }
-
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawBackground();
-            drawTerrain();
-            drawObstacles();
-            drawCollectibles();
-            updatePlayer();
-            drawPlayer();
-            drawScore();
+
+            if (gameState === 'start') {
+                drawStartScreen();
+            } else if (gameState === 'playing') {
+                drawTerrain();
+                drawObstacles();
+                drawCollectibles();
+                updatePlayer();
+                drawPlayer();
+                drawScore();
+            } else if (gameState === 'gameOver') {
+                drawGameOverScreen();
+            }
+
             requestAnimationFrame(update);
         }
 
         function jump() {
-            if (!player.jumping) {
+            if (gameState === 'start') {
+                gameState = 'playing';
+                initGame();
+            } else if (gameState === 'playing' && !player.jumping) {
                 player.vy = JUMP_FORCE;
                 player.jumping = true;
+            } else if (gameState === 'gameOver') {
+                gameState = 'playing';
+                initGame();
             }
         }
 
@@ -304,7 +348,7 @@
             }
         });
 
-        generateTerrain();
+        initGame();
         update();
     </script>
 </body>
