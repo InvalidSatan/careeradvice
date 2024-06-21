@@ -3,68 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Career Advice</title>
+    <title>Career Advice for {{ major }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8f9fa;
-            color: #000000;
-        }
-        .app-state-header {
-            background-color: #1d3d90;
-            color: #ffffff;
-        }
-        .btn-app-state {
-            background-color: #ffcc00;
-            color: #000000;
-        }
-        .btn-app-state:hover {
-            background-color: #e6b800;
-            color: #000000;
-        }
-        .nav-tabs .nav-link {
-            color: #000000;
-        }
-        .nav-tabs .nav-link.active {
-            background-color: #1d3d90;
-            color: #ffffff;
-        }
-        .tab-content {
-            text-align: center;
-        }
-        .tab-pane {
-            padding-top: 20px;
-        }
-    </style>
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <div class="app-state-header text-center py-3 mb-4">
-            <h1>Career Advice for {{ major }}</h1>
+    <div class="app-state-header">
+        <div class="container">
+            <h1 class="text-center">Career Advice for {{ major }}</h1>
         </div>
-        <div class="card">
-            <div class="card-body">
-                <ul class="nav nav-tabs justify-content-center" id="professionTabs" role="tablist">
-                    {% for profession in professions %}
-                    <li class="nav-item">
-                        <a class="nav-link {% if loop.first %}active{% endif %}" id="tab-{{ loop.index }}" data-toggle="tab" href="#content-{{ loop.index }}" role="tab">
-                            {{ profession.name }}
-                        </a>
-                    </li>
-                    {% endfor %}
-                </ul>
-                <div class="tab-content" id="professionContent">
-                    {% for profession in professions %}
-                    <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="content-{{ loop.index }}" role="tabpanel">
-                        <h3>{{ profession.name }}</h3>
-                        <p>{{ profession.description }}</p>
-                        <p><a href="{{ profession.more_info }}" target="_blank" class="btn btn-app-state">More Info</a></p>
-                        <p><a href="{{ profession.program_url }}" target="_blank" class="btn btn-app-state">Related Program at App State</a></p>
+    </div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="card">
+                    <div class="card-body">
+                        <ul class="nav nav-tabs justify-content-center" id="professionTabs" role="tablist">
+                            {% for profession in professions %}
+                            <li class="nav-item">
+                                <a class="nav-link {% if loop.first %}active{% endif %}" id="tab-{{ loop.index }}" data-toggle="tab" href="#content-{{ loop.index }}" role="tab">
+                                    {{ profession.name }}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        <div class="tab-content" id="professionContent">
+                            {% for profession in professions %}
+                            <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="content-{{ loop.index }}" role="tabpanel">
+                                <h3 class="mt-4">{{ profession.name }}</h3>
+                                <p>{{ profession.description }}</p>
+                                <div class="mt-4">
+                                    <a href="{{ profession.more_info }}" target="_blank" class="btn btn-app-state mr-2">Learn More</a>
+                                    <a href="{{ profession.program_url }}" target="_blank" class="btn btn-app-state">Related Program at App State</a>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="text-center mt-4">
+                            <a href="/" class="btn btn-secondary">Start Over</a>
+                        </div>
                     </div>
-                    {% endfor %}
-                </div>
-                <div class="text-center mt-4">
-                    <a href="/" class="btn btn-secondary">Start Over</a>
                 </div>
             </div>
         </div>

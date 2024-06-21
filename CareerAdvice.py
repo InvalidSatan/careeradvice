@@ -127,6 +127,9 @@ def generate_advice():
 
 
 def generate_career_advice(major, interests):
+    if not interests.strip():
+        interests = "general career opportunities"
+
     messages = [
         {"role": "system",
          "content": "You are an expert in giving career advice and work within the Appalachian State University "
