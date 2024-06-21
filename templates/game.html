@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>App State Path Runner</title>
+    <title>App State Mountain Runner</title>
     <style>
         body {
             margin: 0;
@@ -17,20 +17,29 @@
         }
         #gameCanvas {
             border: 2px solid #000000;
+            display: none;
         }
-        #scoreDisplay {
+        #scoreDisplay, #highScoreDisplay {
             position: absolute;
-            top: 10px;
             left: 10px;
             font-size: 20px;
             color: #FFC520;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        #scoreDisplay {
+            top: 10px;
         }
         #highScoreDisplay {
-            position: absolute;
             top: 40px;
-            left: 10px;
+        }
+        #instructions {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
             font-size: 16px;
             color: #FFC520;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
     </style>
 </head>
@@ -38,6 +47,7 @@
     <canvas id="gameCanvas" width="800" height="600"></canvas>
     <div id="scoreDisplay">Score: 0</div>
     <div id="highScoreDisplay">High Score: 0</div>
+    <div id="instructions">Use mouse to move left/right. Press SPACE to jump.</div>
     <script src="{{ url_for('static', filename='game.js') }}"></script>
 </body>
 </html>
