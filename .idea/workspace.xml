@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="56f0665a-e9f1-4aac-9caa-f9b2b99e3f62" name="Changes" comment="Fixed issue where player could no longer jump.">
-      <change beforePath="$PROJECT_DIR$/static/game.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/game.js" afterDir="false" />
-    </list>
+    <list default="true" id="56f0665a-e9f1-4aac-9caa-f9b2b99e3f62" name="Changes" comment="Updated graphics and terrain. Terrain is now one object instead of many." />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -369,7 +367,23 @@
       <option name="project" value="LOCAL" />
       <updated>1718996368521</updated>
     </task>
-    <option name="localTasksCounter" value="35" />
+    <task id="LOCAL-00035" summary="Fixed bug where player would fall through ground when transitioning ground blocks.">
+      <option name="closed" value="true" />
+      <created>1718996816968</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1718996816968</updated>
+    </task>
+    <task id="LOCAL-00036" summary="Updated graphics and terrain. Terrain is now one object instead of many.">
+      <option name="closed" value="true" />
+      <created>1718997138644</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1718997138644</updated>
+    </task>
+    <option name="localTasksCounter" value="37" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -377,8 +391,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Updated templates to include more UI updates." />
-    <MESSAGE value="Updated Index template." />
     <MESSAGE value="Template was not used properly - fixed." />
     <MESSAGE value="Added style sheet and updated to contain App State colors." />
     <MESSAGE value="Updated CSS." />
@@ -402,7 +414,9 @@
     <MESSAGE value="Adjusted to fix climbing mechanics." />
     <MESSAGE value="Removed brown line and added more obstacles. Made path terrain instead of drawn." />
     <MESSAGE value="Fixed issue where player could no longer jump." />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed issue where player could no longer jump." />
+    <MESSAGE value="Fixed bug where player would fall through ground when transitioning ground blocks." />
+    <MESSAGE value="Updated graphics and terrain. Terrain is now one object instead of many." />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated graphics and terrain. Terrain is now one object instead of many." />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/CareerAdvice_AppState_AI$CareerAdvice.coverage" NAME="CareerAdvice Coverage Results" MODIFIED="1717608747656" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
