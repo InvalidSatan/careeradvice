@@ -6,14 +6,15 @@ canvas.height = 600;
 
 const GRAVITY = 0.5;
 const JUMP_FORCE = -10;
-const MOVE_SPEED = 5;
-const CLIMB_SPEED = 3;
+const MOVE_SPEED = 3;
+const CLIMB_SPEED = 2;
 
 const player = {
     x: 100,
     y: canvas.height - 50,
     width: 30,
     height: 50,
+    vx: 0,
     vy: 0,
     climbing: false,
     color: '#FFC520',
@@ -61,11 +62,11 @@ function generateTerrain() {
 }
 
 function generateObstacle() {
-    if (Math.random() < 0.05) {
+    if (Math.random() < 0.1) {
         const lastTerrainSegment = terrain[terrain.length - 1];
         obstacles.push({
             x: lastTerrainSegment.x,
-            y: lastTerrainSegment.y - 30,
+            y: lastTerrainSegment.y - Math.random() * 100 - 30,
             width: 30,
             height: 30
         });
@@ -73,12 +74,12 @@ function generateObstacle() {
 }
 
 function generatePowerUp() {
-    if (Math.random() < 0.02) {
+    if (Math.random() < 0.05) {
         const lastTerrainSegment = terrain[terrain.length - 1];
         const type = Math.random() < 0.5 ? 'jetpack' : 'pickaxe';
         powerUps.push({
             x: lastTerrainSegment.x,
-            y: lastTerrainSegment.y - 50,
+            y: lastTerrainSegment.y - Math.random() * 100 - 50,
             width: 30,
             height: 30,
             type: type
@@ -190,35 +191,50 @@ function update() {
     drawPowerUps();
     drawPlayer();
 
-    // Move player
-    player.x += MOVE_SPEED;
-    if (player.climbing) {
-        player.y -= CLIMB_SPEED;
-    } else if (player.powerUp === 'jetpack') {
-        player.y -= CLIMB_SPEED * 2;
-    } else {
+    // Apply gravity if not climbing
+    if (!player.climbing) {
         player.vy += GRAVITY;
-        player.y += player.vy;
+    }
+
+    // Move player
+    player.x += player.vx;
+    player.y += player.vy;
+
+    // Check for terrain collision and climbing
+    player.climbing = false;
+    terrain.forEach(segment => {
+        if (player.x + player.width > segment.x && player.x < segment.x + 10) {
+            if (player.y + player.height > segment.y - 5 && player.y < segment.y) {
+                player.y = segment.y - player.height;
+                player.vy = 0;
+                player.climbing = true;
+            }
+        }
+    });
+
+    // Climbing mechanics
+    if (player.climbing) {
+        if (player.powerUp === 'pickaxe') {
+            player.vx = CLIMB_SPEED * 1.5;
+        } else {
+            player.vx = CLIMB_SPEED;
+        }
+        player.vy = -CLIMB_SPEED;
+    } else {
+        player.vx = MOVE_SPEED;
+    }
+
+    // Jetpack mechanics
+    if (player.powerUp === 'jetpack') {
+        player.vy = -CLIMB_SPEED * 2;
+        player.vx = MOVE_SPEED * 1.5;
     }
 
     // Check for ground collision
-    const groundLevel = canvas.height - 50;
-    if (player.y > groundLevel) {
-        player.y = groundLevel;
-        player.vy = 0;
-        player.climbing = false;
+    if (player.y + player.height > canvas.height) {
+        gameOver();
+        return;
     }
-
-    // Check for terrain collision
-    player.climbing = false;
-    terrain.forEach(segment => {
-        if (player.x >= segment.x - 15 && player.x <= segment.x + 15 &&
-            player.y + player.height >= segment.y - 5 && player.y + player.height <= segment.y + 5) {
-            player.y = segment.y - player.height;
-            player.vy = 0;
-            player.climbing = true;
-        }
-    });
 
     // Check for obstacle collision
     if (obstacles.some(obstacle =>
@@ -268,6 +284,7 @@ function startGame() {
     score = 0;
     player.x = 100;
     player.y = canvas.height - 150;
+    player.vx = MOVE_SPEED;
     player.vy = 0;
     player.climbing = false;
     player.powerUp = null;
